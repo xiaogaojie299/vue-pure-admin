@@ -8,12 +8,12 @@ import { defineConfig, globalIgnores } from "eslint/config";
 
 export default defineConfig([
   globalIgnores([
-    "**/.*",
-    "dist/*",
-    "*.d.ts",
-    "public/*",
-    "src/assets/**",
-    "src/**/iconfont/**"
+    // "**/.*",
+    // "dist/*",
+    // "*.d.ts",
+    // "public/*",
+    // "src/assets/**",
+    // "src/**/iconfont/**"
   ]),
   {
     ...js.configs.recommended,

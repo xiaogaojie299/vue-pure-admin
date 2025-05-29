@@ -29,6 +29,7 @@ const getConfig = (key?: string): PlatformConfigs => {
 /** 获取项目动态全局配置 */
 export const getPlatformConfig = async (app: App): Promise<undefined> => {
   app.config.globalProperties.$config = getConfig();
+  console.log(VITE_PUBLIC_PATH + "platform-config.json");
   return axios({
     method: "get",
     url: `${VITE_PUBLIC_PATH}platform-config.json`
