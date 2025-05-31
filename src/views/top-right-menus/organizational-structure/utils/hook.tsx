@@ -10,6 +10,8 @@ import { usePublicHooks } from "../../hooks";
 import { addDialog } from "@/components/ReDialog";
 import type { PaginationProps } from "@pureadmin/table";
 import ReCropperPreview from "@/components/ReCropperPreview";
+import { cloneDeep } from "@pureadmin/utils";
+
 import type { FormItemProps, RoleFormItemProps } from "./types";
 import {
   getKeyList,
@@ -441,10 +443,9 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
     });
   }
 
-
   function openDialog(title = "新增", row?: FormItemProps) {
     addDialog({
-      title: `${title}部门`,
+      title: `${title}人员`,
       props: {
         formInline: {
           higherDeptOptions: formatHigherDeptOptions(cloneDeep(dataList.value)),
@@ -458,7 +459,7 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
           remark: row?.remark ?? ""
         }
       },
-      width: "40%",
+      width: "60%",
       draggable: true,
       fullscreen: deviceDetection(),
       fullscreenIcon: true,
@@ -494,7 +495,6 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
   onMounted(async () => {
     treeLoading.value = true;
     onSearch();
-
 
     // 角色列表
     roleOptions.value = (await getAllRoleList()).data;
