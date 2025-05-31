@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup lang="tsx">
 import { useI18n } from "vue-i18n";
 import Motion from "./utils/motion";
 import { useRouter } from "vue-router";
@@ -13,9 +13,8 @@ import { $t, transformI18n } from "@/plugins/i18n";
 import { operates, thirdParty } from "./utils/enums";
 import { useLayout } from "@/layout/hooks/useLayout";
 import LoginPhone from "./components/LoginPhone.vue";
-import LoginRegist from "./components/LoginRegist.vue";
 import LoginUpdate from "./components/LoginUpdate.vue";
-import LoginQrCode from "./components/LoginQrCode.vue";
+import ComponentSelectOrganize from "./components/SelectOrganize.vue";
 import { useUserStoreHook } from "@/store/modules/user";
 import { initRouter, getTopMenu } from "@/router/utils";
 import { bg, avatar, illustration } from "./utils/static";
@@ -34,11 +33,12 @@ import User from "~icons/ri/user-3-fill";
 import Info from "~icons/ri/information-line";
 import Keyhole from "~icons/ri/shield-keyhole-line";
 
+import { addDialog } from "@/components/ReDialog";
+
 defineOptions({
   name: "Login"
 });
 
-const imgCode = ref("");
 const loginDay = ref(7);
 const router = useRouter();
 const loading = ref(false);
@@ -59,10 +59,31 @@ const { locale, translationCh, translationEn } = useTranslationLang();
 
 const ruleForm = reactive({
   username: "admin",
-  password: "admin123",
-  verifyCode: ""
+  password: "admin123"
 });
 
+const handleVisibleSelectOrganize = list => {
+  const selectOrganizeRef = ref();
+  addDialog({
+    width: "60%",
+    title: "检测到您有多个组织，请先选择登录组织",
+    draggable: true,
+    alignCenter: true,
+    center: true,
+    beforeSure: async (done, { options, index }) => {
+      selectOrganizeRef.value?.onSubmit();
+      setTimeout(() => {
+        done();
+      }, 2000);
+    },
+    contentRenderer: () => (
+      <ComponentSelectOrganize
+        list={list}
+        ref={el => (selectOrganizeRef.value = el)}
+      />
+    )
+  });
+};
 const onLogin = async (formEl: FormInstance | undefined) => {
   if (!formEl) return;
   await formEl.validate(valid => {
@@ -78,6 +99,24 @@ const onLogin = async (formEl: FormInstance | undefined) => {
             // 获取后端路由
             return initRouter().then(() => {
               disabled.value = true;
+              let list = [
+                {
+                  title: "标题一",
+                  value: "0",
+                  description: "坚持梦想，成就不凡的自己",
+                  avatar:
+                    "https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg"
+                },
+                {
+                  title: "标题二",
+                  value: "1",
+                  description: "每一次努力，都是成长的契机",
+                  avatar:
+                    "https://fuss10.elemecdn.com/1/34/19aa98b1fcb2781c4fba33d850549jpeg.jpeg"
+                }
+              ];
+              handleVisibleSelectOrganize(list);
+              return;
               router
                 .push(getTopMenu(true).path)
                 .then(() => {
@@ -109,9 +148,6 @@ useEventListener(document, "keydown", ({ code }) => {
     immediateDebounce(ruleFormRef.value);
 });
 
-watch(imgCode, value => {
-  useUserStoreHook().SET_VERIFYCODE(value);
-});
 watch(checked, bool => {
   useUserStoreHook().SET_ISREMEMBERED(bool);
 });
@@ -187,21 +223,6 @@ watch(loginDay, value => {
               </el-form-item>
             </Motion>
 
-            <Motion :delay="200">
-              <el-form-item prop="verifyCode">
-                <el-input
-                  v-model="ruleForm.verifyCode"
-                  clearable
-                  :placeholder="t('login.pureVerifyCode')"
-                  :prefix-icon="useRenderIcon(Keyhole)"
-                >
-                  <template v-slot:append>
-                    <ReImageVerify v-model:code="imgCode" />
-                  </template>
-                </el-input>
-              </el-form-item>
-            </Motion>
-
             <Motion :delay="250">
               <el-form-item>
                 <div class="w-full h-[20px] flex justify-between items-center">
@@ -257,10 +278,6 @@ watch(loginDay, value => {
           </el-form>
           <!-- 手机号登录 -->
           <LoginPhone v-if="currentPage === 1" />
-          <!-- 二维码登录 -->
-          <LoginQrCode v-if="currentPage === 2" />
-          <!-- 注册 -->
-          <LoginRegist v-if="currentPage === 3" />
           <!-- 忘记密码 -->
           <LoginUpdate v-if="currentPage === 4" />
         </div>

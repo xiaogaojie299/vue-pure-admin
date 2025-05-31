@@ -10,6 +10,7 @@ import { useTranslationLang } from "../../hooks/useTranslationLang";
 import { usePermissionStoreHook } from "@/store/modules/permission";
 import LaySidebarItem from "../lay-sidebar/components/SidebarItem.vue";
 import LaySidebarFullScreen from "../lay-sidebar/components/SidebarFullScreen.vue";
+import NavRightTop from "../lay-sidebar/NavRightTop.vue";
 
 import GlobalizationIcon from "@/assets/svg/globalization.svg?component";
 import AccountSettingsIcon from "~icons/ri/user-settings-line";
@@ -18,6 +19,12 @@ import Setting from "~icons/ri/settings-3-line";
 import Check from "~icons/ep/check";
 
 const menuRef = ref();
+
+const menuData = computed(() => {
+  let routerData = usePermissionStoreHook().wholeMenus;
+  return routerData?.filter(item => !item?.isFixed);
+});
+
 const showLogo = ref(
   storageLocal().getItem<StorageConfigs>(
     `${responsiveStorageNameSpace()}configure`
@@ -72,45 +79,18 @@ onMounted(() => {
       :default-active="defaultActive"
     >
       <LaySidebarItem
-        v-for="route in usePermissionStoreHook().wholeMenus"
+        v-for="route in menuData"
         :key="route.path"
         :item="route"
         :base-path="route.path"
       />
     </el-menu>
     <div class="horizontal-header-right">
+      <div>
+        <NavRightTop></NavRightTop>
+      </div>
       <!-- 菜单搜索 -->
       <LaySearch id="header-search" />
-      <!-- 国际化 -->
-      <el-dropdown id="header-translation" trigger="click">
-        <GlobalizationIcon
-          class="navbar-bg-hover w-[40px] h-[48px] p-[11px] cursor-pointer outline-hidden"
-        />
-        <template #dropdown>
-          <el-dropdown-menu class="translation">
-            <el-dropdown-item
-              :style="getDropdownItemStyle(locale, 'zh')"
-              :class="['dark:text-white!', getDropdownItemClass(locale, 'zh')]"
-              @click="translationCh"
-            >
-              <span v-show="locale === 'zh'" class="check-zh">
-                <IconifyIconOffline :icon="Check" />
-              </span>
-              简体中文
-            </el-dropdown-item>
-            <el-dropdown-item
-              :style="getDropdownItemStyle(locale, 'en')"
-              :class="['dark:text-white!', getDropdownItemClass(locale, 'en')]"
-              @click="translationEn"
-            >
-              <span v-show="locale === 'en'" class="check-en">
-                <IconifyIconOffline :icon="Check" />
-              </span>
-              English
-            </el-dropdown-item>
-          </el-dropdown-menu>
-        </template>
-      </el-dropdown>
       <!-- 全屏 -->
       <LaySidebarFullScreen id="full-screen" />
       <!-- 消息通知 -->

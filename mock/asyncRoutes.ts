@@ -104,6 +104,25 @@ const permissionRouter = {
   ]
 };
 
+const organizationalStructure = {
+  path: "/organizational-structure",
+  isFixed: true,
+  meta: {
+    title: "组织架构",
+    icon: "ep:lollipop"
+  },
+  children: [
+    {
+      path: "/top-right-menus/organizational-structure/index",
+      name: "TopRightOrganizationalStructure",
+      meta: {
+        title: "组织架构",
+        roles: ["admin", "common"]
+      }
+    }
+  ]
+};
+
 export default defineFakeRoute([
   {
     url: "/get-async-routes",
@@ -111,7 +130,11 @@ export default defineFakeRoute([
     response: () => {
       return {
         success: true,
-        data: [permissionRouter, systemManagementRouter]
+        data: [
+          permissionRouter,
+          systemManagementRouter,
+          organizationalStructure
+        ]
       };
     }
   }

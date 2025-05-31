@@ -381,7 +381,7 @@ onUnmounted(() => removeMatchMedia);
           <div />
           <div />
         </li>
-        <li
+        <!-- <li
           v-if="device !== 'mobile'"
           ref="mixRef"
           v-tippy="{
@@ -393,7 +393,7 @@ onUnmounted(() => removeMatchMedia);
         >
           <div />
           <div />
-        </li>
+        </li> -->
       </ul>
 
       <span v-if="useAppStoreHook().getViewportWidth > 1280">

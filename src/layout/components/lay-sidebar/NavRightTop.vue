@@ -37,9 +37,8 @@ const menuData = computed(() => {
       ? subMenuData.value
       : usePermissionStoreHook().wholeMenus;
 
-  return routerData?.filter(item => !item?.isFixed);
+  return routerData?.filter(item => !!item?.isFixed);
 });
-
 const loading = computed(() =>
   pureApp.layout === "mix" ? false : menuData.value.length === 0 ? true : false
 );
@@ -63,7 +62,7 @@ function getSubMenuData() {
     usePermissionStoreHook().wholeMenus
   );
   if (!parenetRoute?.children) return;
-  subMenuData.value = parenetRoute?.children;
+  subMenuData.value = parenetRoute?.children.filter(item => !!item?.isFixed);
 }
 
 watch(
@@ -90,22 +89,16 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div
-    v-loading="loading"
-    :class="['sidebar-container', showLogo ? 'has-logo' : 'no-logo']"
-    @mouseenter.prevent="isShow = true"
-    @mouseleave.prevent="isShow = false"
-  >
-    <LaySidebarLogo v-if="showLogo" :collapse="isCollapse" />
+  <div>
     <el-scrollbar
       wrap-class="scrollbar-wrapper"
       :class="[device === 'mobile' ? 'mobile' : 'pc']"
     >
       <el-menu
         unique-opened
-        mode="vertical"
+        mode="horizontal"
+        :ellipsis="false"
         popper-class="pure-scrollbar"
-        class="outer-most select-none"
         :collapse="isCollapse"
         :collapse-transition="false"
         :popper-effect="tooltipEffect"
@@ -116,7 +109,6 @@ onBeforeUnmount(() => {
           :key="routes.path"
           :item="routes"
           :base-path="routes.path"
-          class="outer-most select-none"
         />
       </el-menu>
     </el-scrollbar>
@@ -125,16 +117,17 @@ onBeforeUnmount(() => {
       :is-active="pureApp.sidebar.opened"
       @toggleClick="toggleSideBar"
     />
-    <LaySidebarLeftCollapse
-      v-if="device !== 'mobile'"
-      :is-active="pureApp.sidebar.opened"
-      @toggleClick="toggleSideBar"
-    />
   </div>
 </template>
 
-<style scoped>
+<style lang="scss" scoped>
 :deep(.el-loading-mask) {
   opacity: 0.45;
+}
+::v-deep {
+  .el-menu--horizontal a > .is-active.submenu-title-noDropdown {
+    border-bottom: none;
+    background: var(--el-color-primary) !important;
+  }
 }
 </style>

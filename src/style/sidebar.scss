@@ -172,14 +172,14 @@
     .is-active > .el-sub-menu__title,
     .is-active.submenu-title-noDropdown {
       color: var(--pure-theme-sub-menu-active-text) !important;
-
       i {
         color: var(--pure-theme-sub-menu-active-text) !important;
       }
     }
 
     .is-active {
-      color: var(--pure-theme-sub-menu-active-text) !important;
+      // color: var(--pure-theme-sub-menu-active-text) !important;
+      color: red !important; 
       transition: color 0.3s;
     }
 
