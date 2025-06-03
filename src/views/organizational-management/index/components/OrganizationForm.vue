@@ -80,7 +80,7 @@
             label-position="left"
             :label-width="LABLE_WIDTH"
           >
-            <el-select v-model="form.country" placeholder="请选择">
+            <el-select v-model="form.province" placeholder="请选择">
               <el-option label="全部省份" value="0"> </el-option>
             </el-select>
           </el-form-item>
