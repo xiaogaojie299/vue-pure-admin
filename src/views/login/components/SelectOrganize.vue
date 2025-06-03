@@ -14,8 +14,11 @@ const props = defineProps<{
 }>();
 const current = ref("0");
 
-const onSubmit = () => {
-  console.log(current.value, "提交了");
+const onSubmit = async () => {
+  return new Promise(resolve => {
+    resolve(true);
+    console.log(current.value, "提交了");
+  });
 };
 
 defineExpose({

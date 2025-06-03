@@ -1,6 +1,6 @@
 // 模拟后端动态生成路由
 import { defineFakeRoute } from "vite-plugin-fake-server/client";
-import { system, monitor, permission, frame, tabs } from "@/router/enums";
+import { system, permission, organizational } from "@/router/enums";
 
 /**
  * roles：页面级别权限，这里模拟二种 "admin"、"common"
@@ -21,8 +21,7 @@ const systemManagementRouter = {
       name: "SystemUser",
       meta: {
         icon: "ri:admin-line",
-        title: "menus.pureUser",
-        roles: ["admin"]
+        title: "menus.pureUser"
       }
     },
     {
@@ -30,8 +29,7 @@ const systemManagementRouter = {
       name: "SystemRole",
       meta: {
         icon: "ri:admin-fill",
-        title: "menus.pureRole",
-        roles: ["admin"]
+        title: "menus.pureRole"
       }
     },
     {
@@ -40,7 +38,7 @@ const systemManagementRouter = {
       meta: {
         icon: "ep:menu",
         title: "menus.pureSystemMenu",
-        roles: ["admin"]
+        roles: []
       }
     },
     {
@@ -49,7 +47,7 @@ const systemManagementRouter = {
       meta: {
         icon: "ri:git-branch-line",
         title: "menus.pureDept",
-        roles: ["admin"]
+        roles: []
       }
     }
   ]
@@ -104,6 +102,33 @@ const permissionRouter = {
   ]
 };
 
+const organizationalManagement = {
+  path: "/organizational-management",
+  meta: {
+    icon: "ep:office-building",
+    title: "组织管理",
+    rank: organizational
+  },
+  children: [
+    {
+      path: "/organizational-management/index",
+      name: "OrganizationalManagementIndex",
+      meta: {
+        title: "组织管理"
+      },
+      component: "organizational-management/index/index.vue"
+    },
+    {
+      path: "/organizational-structure/add",
+      name: "OrganizationalManagementAdd",
+      meta: {
+        title: "添加组织"
+      },
+      component: "organizational-management/index/add.vue"
+    }
+  ]
+};
+
 const organizationalStructure = {
   path: "/organizational-structure",
   isFixed: true,
@@ -116,8 +141,7 @@ const organizationalStructure = {
       path: "/top-right-menus/organizational-structure/index",
       name: "TopRightOrganizationalStructure",
       meta: {
-        title: "组织架构",
-        roles: ["admin", "common"]
+        title: "组织架构"
       }
     }
   ]
@@ -133,7 +157,8 @@ export default defineFakeRoute([
         data: [
           permissionRouter,
           systemManagementRouter,
-          organizationalStructure
+          organizationalStructure,
+          organizationalManagement
         ]
       };
     }

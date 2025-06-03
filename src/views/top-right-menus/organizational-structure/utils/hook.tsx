@@ -307,6 +307,7 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
       formatHigherDeptOptions(treeList[i].children);
       newTreeList.push(treeList[i]);
     }
+    console.log("newTreeList", newTreeList);
     return newTreeList;
   }
 
@@ -448,7 +449,8 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
       title: `${title}人员`,
       props: {
         formInline: {
-          higherDeptOptions: formatHigherDeptOptions(cloneDeep(dataList.value)),
+          higherDeptOptions: formatHigherDeptOptions(higherDeptOptions.value),
+          roleOptions: roleOptions.value ?? [],
           parentId: row?.parentId ?? 0,
           name: row?.name ?? "",
           principal: row?.principal ?? "",
@@ -456,7 +458,8 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
           email: row?.email ?? "",
           sort: row?.sort ?? 0,
           status: row?.status ?? 1,
-          remark: row?.remark ?? ""
+          birthday: undefined, // 生日
+          zhiwei: "" // 职位
         }
       },
       width: "60%",
@@ -495,6 +498,11 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
   onMounted(async () => {
     treeLoading.value = true;
     onSearch();
+    // 归属部门
+    const { data } = await getDeptList();
+    higherDeptOptions.value = handleTree(data);
+    treeData.value = handleTree(data);
+    treeLoading.value = false;
 
     // 角色列表
     roleOptions.value = (await getAllRoleList()).data;

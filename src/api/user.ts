@@ -1,4 +1,5 @@
 import { http } from "@/utils/http";
+import { baseUrlApi } from "@/utils/http/baseUrlApi";
 
 export type UserResult = {
   success: boolean;
@@ -70,7 +71,21 @@ type ResultTable = {
 
 /** 登录 */
 export const getLogin = (data?: object) => {
-  return http.request<UserResult>("post", "/login", { data });
+  return http.request<UserResult>("post", baseUrlApi("auth/login"), { data });
+};
+
+/** 验证码登录 */
+export const getLoginByCode = (data?: object) => {
+  return http.request<UserResult>("post", baseUrlApi("auth/codeLogin"), {
+    data
+  });
+};
+
+/** 发送验证码 */
+export const sendVerifyCode = (data?: object) => {
+  return http.request<UserResult>("post", baseUrlApi("/auth/sendCode"), {
+    data
+  });
 };
 
 /** 刷新`token` */

@@ -11,6 +11,7 @@ import EpMonitor from "~icons/ep/monitor?raw";
 import EpLollipop from "~icons/ep/lollipop?raw";
 import EpHistogram from "~icons/ep/histogram?raw";
 import EpHomeFilled from "~icons/ep/home-filled?raw";
+import EpOfficeBuilding from "~icons/ep/office-building";
 
 // https://icon-sets.iconify.design/ri/?keyword=ri
 import RiMindMap from "~icons/ri/mind-map?raw";
@@ -51,8 +52,11 @@ const icons = [
   ["ep/lollipop", EpLollipop],
   ["ep/histogram", EpHistogram],
   ["ep/home-filled", EpHomeFilled],
-  // Remix Icon: https://github.com/Remix-Design/RemixIcon
-  ["ri/mind-map", RiMindMap],
+  ["ep/office-building", EpOfficeBuilding],
+  [
+    // Remix Icon: https://github.com/Remix-Design/RemixIcon
+    ("ri/mind-map", RiMindMap)
+  ],
   ["ri/admin-fill", RiAdminFill],
   ["ri/table-line", RiTableLine],
   ["ri/links-fill", RiLinksFill],

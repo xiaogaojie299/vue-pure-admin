@@ -8,6 +8,7 @@ import type { FormInstance } from "element-plus";
 import { $t, transformI18n } from "@/plugins/i18n";
 import { useVerifyCode } from "../utils/verifyCode";
 import { useUserStoreHook } from "@/store/modules/user";
+import { getLoginByCode } from "@/api/user";
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
 import Iphone from "~icons/ep/iphone";
 import Keyhole from "~icons/ri/shield-keyhole-line";
@@ -26,16 +27,25 @@ const onLogin = async (formEl: FormInstance | undefined) => {
   if (!formEl) return;
   await formEl.validate(valid => {
     if (valid) {
-      // 模拟登录请求，需根据实际开发进行修改
-      setTimeout(() => {
-        message(transformI18n($t("login.pureLoginSuccess")), {
-          type: "success"
-        });
-        loading.value = false;
-      }, 2000);
+      useUserStoreHook().loginByCode({
+        mobile: ruleForm.phone,
+        code: ruleForm.verifyCode
+      });
     } else {
       loading.value = false;
     }
+  });
+};
+
+const onSendVerifyCode = async () => {
+  await useVerifyCode()?.start(ruleFormRef.value, "phone");
+  let response = await useVerifyCode().getVerifyCode({
+    mobile: ruleForm.phone
+  });
+
+  getLoginByCode({
+    mobile: ruleForm.phone,
+    code: ruleForm.verifyCode
   });
 };
 
@@ -70,7 +80,7 @@ function onBack() {
           <el-button
             :disabled="isDisabled"
             class="ml-2!"
-            @click="useVerifyCode().start(ruleFormRef, 'phone')"
+            @click="onSendVerifyCode"
           >
             {{
               text.length > 0

@@ -12,7 +12,10 @@ import { createFormData, deviceDetection } from "@pureadmin/utils";
 
 const props = withDefaults(defineProps<FormProps>(), {
   formInline: () => ({
-    avatar: "",
+    ids: [], // 角色id
+    birthday: undefined, // 生日
+    zhiwei: "", // 职位
+    avatar: "", // 头像
     title: "新增",
     higherDeptOptions: [],
     parentId: 0,
@@ -81,6 +84,10 @@ const handleClose = () => {
   cropRef.value.hidePopover();
   uploadRef.value.clearFiles();
   isShow.value = false;
+};
+
+const disabledDate = (time: Date) => {
+  return time.getTime() > Date.now();
 };
 
 defineExpose({ getRef });
@@ -171,6 +178,26 @@ defineExpose({ getRef });
               </el-cascader>
             </el-form-item>
           </re-col>
+          <re-col :value="12" :xs="24" :sm="24">
+            <el-form-item label="额外权限" prop="ids">
+              <el-select
+                v-model="newFormInline.ids"
+                placeholder="请选择"
+                class="w-full"
+                clearable
+                multiple
+              >
+                <el-option
+                  v-for="(item, index) in newFormInline.roleOptions"
+                  :key="index"
+                  :value="item.id"
+                  :label="item.name"
+                >
+                  {{ item.name }}
+                </el-option>
+              </el-select>
+            </el-form-item>
+          </re-col>
 
           <re-col :value="12" :xs="24" :sm="24">
             <el-form-item label="电话" prop="phone">
@@ -183,11 +210,32 @@ defineExpose({ getRef });
           </re-col>
 
           <re-col :value="12" :xs="24" :sm="24">
-            <el-form-item label="用户昵称" prop="nickname">
+            <el-form-item label="生日" prop="birthday">
+              <el-date-picker
+                v-model="newFormInline.birthday"
+                type="date"
+                class="w-[160px]!"
+                placeholder="请选择"
+                :disabled-date="disabledDate"
+              />
+            </el-form-item>
+          </re-col>
+
+          <re-col :value="12" :xs="24" :sm="24">
+            <el-form-item label="职位" prop="zhiwei">
+              <el-input
+                v-model="newFormInline.zhiwei"
+                clearable
+                placeholder="请输入"
+              />
+            </el-form-item>
+          </re-col>
+          <re-col :value="12" :xs="24" :sm="24">
+            <el-form-item label="昵称" prop="nickname">
               <el-input
                 v-model="newFormInline.nickname"
                 clearable
-                placeholder="请输入用户昵称"
+                placeholder="请输入"
               />
             </el-form-item>
           </re-col>

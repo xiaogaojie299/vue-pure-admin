@@ -71,10 +71,15 @@ const handleVisibleSelectOrganize = list => {
     alignCenter: true,
     center: true,
     beforeSure: async (done, { options, index }) => {
-      selectOrganizeRef.value?.onSubmit();
-      setTimeout(() => {
-        done();
-      }, 2000);
+      await selectOrganizeRef.value?.onSubmit();
+      done();
+
+      router
+        .push(getTopMenu(true).path)
+        .then(() => {
+          message(t("login.pureLoginSuccess"), { type: "success" });
+        })
+        .finally(() => (disabled.value = false));
     },
     contentRenderer: () => (
       <ComponentSelectOrganize
@@ -95,9 +100,11 @@ const onLogin = async (formEl: FormInstance | undefined) => {
           password: ruleForm.password
         })
         .then(res => {
-          if (res.success) {
+          if (res.code == 200) {
             // 获取后端路由
-            return initRouter().then(() => {
+            return initRouter().then(asyncRoute => {
+              console.log("asyncRoute", asyncRoute);
+
               disabled.value = true;
               let list = [
                 {
@@ -116,13 +123,6 @@ const onLogin = async (formEl: FormInstance | undefined) => {
                 }
               ];
               handleVisibleSelectOrganize(list);
-              return;
-              router
-                .push(getTopMenu(true).path)
-                .then(() => {
-                  message(t("login.pureLoginSuccess"), { type: "success" });
-                })
-                .finally(() => (disabled.value = false));
             });
           } else {
             message(t("login.pureLoginFail"), { type: "error" });

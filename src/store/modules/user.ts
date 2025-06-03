@@ -11,6 +11,7 @@ import {
   type UserResult,
   type RefreshTokenResult,
   getLogin,
+  getLoginByCode,
   refreshTokenApi
 } from "@/api/user";
 import { useMultiTagsStoreHook } from "./multiTags";
@@ -79,6 +80,20 @@ export const useUserStore = defineStore("pure-user", {
     async loginByUsername(data) {
       return new Promise<UserResult>((resolve, reject) => {
         getLogin(data)
+          .then(data => {
+            console.log(data);
+            if (data.code == 200) setToken(data.data);
+            resolve(data);
+          })
+          .catch(error => {
+            reject(error);
+          });
+      });
+    },
+    /** 验证码登入 */
+    async loginByCode(data) {
+      return new Promise<UserResult>((resolve, reject) => {
+        getLoginByCode(data)
           .then(data => {
             if (data?.success) setToken(data.data);
             resolve(data);
