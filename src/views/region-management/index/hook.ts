@@ -1,9 +1,19 @@
 import dayjs from "dayjs";
 import { message } from "@/utils/message";
 import {  ElMessageBox } from "element-plus";
+import { handleTree } from "@/utils/tree";
 
 import { addDialog } from "@/components/ReDialog";
 import editForm from "./form.vue";
+import { TOAST_TITLE_SUCCESS } from "@/constants";
+
+
+import {
+  addRegion,
+  editRegion,
+  getRegion,
+  deleteRegion
+} from "@/api/region-management";
 
 import { type Ref, reactive, ref, onMounted, toRaw, h } from "vue";
 
@@ -20,32 +30,26 @@ export function useRegion(tableRef: Ref) {
     loading.value = true;
   }
 
+  function formatName(data, key='name') {
+    const originalFields = ["country", "province", "market", "area", "street"];
+    data.forEach((item) => {
+      originalFields.forEach((field) => {
+        if (item[field]) {
+          item[key] = item[field];
+        }
+      });
+    });
+    return data
+  }
   // 异步加载树形数据
   const loadTreeData = async () => {
+    loading.value = true;
     try {
-      let responseData = [
-        {
-          id: 1,
-          name: "制造业",
-          leavel: 1,
-          children: [
-            { id: 2, name: "汽车制造", leavel: 2 },
-            { id: 3, name: "电子设备制造", leavel: 2 }
-          ]
-        },
-        {
-          id: 4,
-          name: "服务业",
-          leavel: 1,
-          children: [
-            { id: 5, name: "软件服务", leavel: 2 },
-            { id: 6, name: "物流服务", leavel: 2 }
-          ]
-        }
-      ];
-      setTimeout(() => {
-        dataList.value = responseData || [];
-      }, 1000);
+      let { data } = await getRegion();
+      data = formatName(data);
+      let treeList = handleTree(data);
+      dataList.value = treeList || [];
+      console.log("treeList", treeList);
       // const response = await axios.get('/api/industry-category') // 替换为你的接口地址
       // dataList.value = response.data || []
     } catch (error) {
@@ -53,17 +57,48 @@ export function useRegion(tableRef: Ref) {
       console.error("Failed to load industry categories:", error);
     }
   };
-  function openDialog(title = "新增", row: any) {
-    let titleLeavelMap = {
-      1: "一级分类",
-      2: "二级分类"
+  function openDialog(title = "新增", row: any, type = "add") {
+    let titlelevelMap = {
+      1: "一级区域",
+      2: "二级区域",
+      3: "三级区域",
+      4: "四级区域",
+      5: "五级区域",
     };
+
+    // 提取上级信息
+    const parentNames = [];
+
+    // 如果是子节点，获取所有上级节点名称
+    let current = row;
+    while (current && current.level > 1) {
+      const parent = findParentNode(dataList.value, current.parentId);
+      if (parent) {
+        parentNames.unshift(parent.name); // 往数组头部插入
+        current = parent;
+      } else {
+        break;
+      }
+    }
+    // 构造表单初始值
+    const formInlineData =
+      type === "edit"
+        ? {
+            ...row,
+            parentNames: parentNames // [制造业, 汽车制造]
+          }
+        : {
+            parentId: row?.id || 0,
+            level: row.level + 1,
+            parentNames: parentNames // [制造业, 汽车制造]
+          };
+    
+    const apiFn = type === "edit" ? editRegion : addRegion;
+
     addDialog({
-      title: `${title}${titleLeavelMap[row.leavel + 1]}`,
+      title: `${title}${titlelevelMap[type === "edit" ? row.level : row.level + 1]}`,
       props: {
-        formInline: {
-          username: row?.username ?? ""
-        }
+        formInline: formInlineData
       },
       width: "40%",
       draggable: true,
@@ -72,44 +107,58 @@ export function useRegion(tableRef: Ref) {
       beforeSure: (done, { options }) => {
         const FormRef = formRef.value.getRef();
         const curData = options.props.formInline as FormItemProps;
+
         function chores() {
-          message(`您${title}了角色名称为${curData.username}的这条数据`, {
+          message(TOAST_TITLE_SUCCESS, {
             type: "success"
           });
           done(); // 关闭弹框
-          onSearch(); // 刷新表格数据
+          loadTreeData(); // 刷新表格数据
         }
-        FormRef.validate(valid => {
+
+        FormRef.validate(async valid => {
           if (valid) {
-            console.log("curData", curData);
-            // 表单规则校验通过
-            if (title === "新增") {
-              // 实际开发先调用新增接口，再进行下面操作
-              chores();
-            } else {
-              // 实际开发先调用修改接口，再进行下面操作
-              chores();
-            }
+            await apiFn({
+              ...curData
+            });
+            chores();
           }
         });
       }
     });
   }
 
-  function handleDelete(row: any) {
-    ElMessageBox.confirm("是否确认删除部门?", "提示", {
-      confirmButtonText: "确认",
-      cancelButtonText: "关闭",
-      type: "warning"
-    })
-      .then(() => {
-        message({
-          type: "success",
-          message: "删除成功"
-        });
-        onSearch();
-      })
-      .catch(() => {});
+  // 查找父节点的工具函数
+  function findParentNode(nodes, parentId) {
+    for (const node of nodes) {
+      if (node.id === parentId) {
+        return node;
+      }
+      if (node.children) {
+        const result = findParentNode(node.children, parentId);
+        if (result) return result;
+      }
+    }
+    return null;
+  }
+
+  async function handleDelete(row: any) {
+        await deleteRegion([row.id]);
+        message(TOAST_TITLE_SUCCESS, { type: "success" });
+        loadTreeData();
+    // ElMessageBox.confirm("是否确认删除此类型?", "提示", {
+    //   confirmButtonText: "确认",
+    //   cancelButtonText: "关闭",
+    //   type: "warning"
+    // })
+    //   .then(() => {
+    //     message({
+    //       type: "success",
+    //       message: "删除成功"
+    //     });
+    //     onSearch();
+    //   })
+    //   .catch(() => {});
   }
 
   // 行点击事件

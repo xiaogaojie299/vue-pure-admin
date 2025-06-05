@@ -1,34 +1,37 @@
 <script setup lang="tsx">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted } from "vue";
 import { useRegion } from "./hook";
-import { ElMessage } from 'element-plus'
+import { ElMessage } from "element-plus";
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
-import Test from "./components/Test.vue"
 
 import AddFill from "~icons/ri/add-circle-line";
 defineOptions({
-  name: 'RegionManagementIndex'
-})
-const tableRef = ref()
+  name: "RegionManagementIndex"
+});
+const tableRef = ref();
 const {
   dataList,
   loadTreeData,
   onSearch,
   openDialog,
   handleDelete,
-  handleRowClick,
+  handleRowClick
 } = useRegion(tableRef);
-
 </script>
 
 <template>
   <div class="industry-category-container">
     <el-card>
       <template #header>
-        <el-button type="primary" :icon="useRenderIcon(AddFill)" @click="openDialog('新增',{leavel: 0})">新增一级分类</el-button>
+        <el-button
+          type="primary"
+          :icon="useRenderIcon(AddFill)"
+          @click="openDialog('新增', { leavel: 0 })"
+          >新增一级区域</el-button
+        >
       </template>
-      <Test></Test>
-      <!-- <el-table
+
+      <el-table
         ref="tableRef"
         :data="dataList"
         row-key="id"
@@ -38,21 +41,81 @@ const {
         @row-click="handleRowClick"
         border
       >
-        <el-table-column prop="name" label="分类名称" width="200">
+        <el-table-column prop="country" label="一级区域">
           <template #default="{ row }">
-            <span v-if="!row.children" style="margin-left: 10px">{{ row.name }}</span>
-            <strong v-else style="color: #333">{{ row.name }}</strong>
+            <span v-if="!row.children" style="margin-left: 10px">{{
+              row.country
+            }}</span>
+            <strong v-else style="color: #333">{{ row.country }}</strong>
+          </template>
+        </el-table-column>
+        <el-table-column prop="province" label="二级区域（省）">
+          <template #default="{ row }">
+            <span v-if="!row.children" style="margin-left: 10px">{{
+              row.province
+            }}</span>
+            <strong v-else style="color: #333">{{ row.province }}</strong>
           </template>
         </el-table-column>
 
-        <el-table-column label="操作" align="center">
+        <el-table-column prop="market" label="三级区域（市）">
           <template #default="{ row }">
-            <el-button link size="small" type="primary" @click="openDialog('新增', row)">添加下级</el-button>
-            <el-button link size="small" type="primary">编辑</el-button>
-            <el-button link size="small" type="danger" >删除</el-button>
+            <span v-if="!row.children" style="margin-left: 10px">{{
+              row.market
+            }}</span>
+            <strong v-else style="color: #333">{{ row.market }}</strong>
           </template>
         </el-table-column>
-      </el-table> -->
+
+        <el-table-column prop="area" label="四级区域（区）">
+          <template #default="{ row }">
+            <span v-if="!row.children" style="margin-left: 10px">{{
+              row.area
+            }}</span>
+            <strong v-else style="color: #333">{{ row.area }}</strong>
+          </template>
+        </el-table-column>
+
+        <el-table-column prop="street" label="五级区域（街道）">
+          <template #default="{ row }">
+            <span v-if="!row.children" style="margin-left: 10px">{{
+              row.street
+            }}</span>
+            <strong v-else style="color: #333">{{ row.street }}</strong>
+          </template>
+        </el-table-column>
+
+        <el-table-column label="操作" align="right" width="200">
+          <template #default="{ row }">
+            <el-button
+              v-if="row.level < 5"
+              link
+              size="small"
+              type="primary"
+              @click="openDialog('新增', row)"
+              >添加下级区域</el-button
+            >
+            <el-button
+              link
+              size="small"
+              type="primary"
+              @click="openDialog('编辑', row, 'edit')"
+              >编辑</el-button
+            >
+
+            <el-popconfirm
+              title="是否确认删除此区域吗?"
+              @confirm="handleDelete(row)"
+            >
+              <template #reference>
+                <el-button class="reset-margin" link size="small" type="danger"
+                  >删除</el-button
+                >
+              </template>
+            </el-popconfirm>
+          </template>
+        </el-table-column>
+      </el-table>
     </el-card>
   </div>
 </template>

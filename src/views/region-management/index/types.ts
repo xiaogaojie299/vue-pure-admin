@@ -4,7 +4,7 @@ interface FormItemProps {
   /** 角色名称 */
   name: string;
   status: number;
-  showLabel: string;
+  frontName: string;
 }
 interface FormProps {
   formInline: FormItemProps;
