@@ -13,6 +13,7 @@ import { stringify } from "qs";
 import NProgress from "../progress";
 import { getToken, formatToken } from "@/utils/auth";
 import { useUserStoreHook } from "@/store/modules/user";
+import { message } from "../message";
 
 // 相关配置请参考：www.axios-js.com/zh-cn/docs/#axios-request-config-1
 const defaultConfig: AxiosRequestConfig = {
@@ -120,6 +121,9 @@ class PureHttp {
     const instance = PureHttp.axiosInstance;
     instance.interceptors.response.use(
       (response: PureHttpResponse) => {
+        console.log("请求成功", response);
+
+        const $data = response.data;
         const $config = response.config;
         // 关闭进度条动画
         NProgress.done();
@@ -132,9 +136,18 @@ class PureHttp {
           PureHttp.initConfig.beforeResponseCallback(response);
           return response.data;
         }
-        return response.data;
+        if ($data.code == 200) {
+          $data.success = true;
+        }
+          if (!$data.success) {
+            message($data.msg, { type: "error" });
+            return Promise.reject($data.msg);
+          }
+
+          return response.data;
       },
       (error: PureHttpError) => {
+        console.log("请求出错", error);
         const $error = error;
         $error.isCancelRequest = Axios.isCancel($error);
         // 关闭进度条动画

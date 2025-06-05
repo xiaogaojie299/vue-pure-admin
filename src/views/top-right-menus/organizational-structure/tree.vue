@@ -115,7 +115,7 @@ const onAddDept = () => {
 };
 
 const onDeleteDept = (node, data) => {
-  ElMessageBox.confirm("是否确认删除部门?", "Warning", {
+  ElMessageBox.confirm("是否确认删除部门?", "提示", {
     confirmButtonText: "确认",
     cancelButtonText: "关闭",
     type: "warning"

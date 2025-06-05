@@ -1,6 +1,11 @@
 import { getPluginsList } from "./build/plugins";
 import { include, exclude } from "./build/optimize";
-import { type UserConfigExport, type ConfigEnv, loadEnv } from "vite";
+import {
+  type UserConfigExport,
+  type ConfigEnv,
+  loadEnv,
+  defineConfig
+} from "vite";
 import {
   root,
   alias,
@@ -8,6 +13,7 @@ import {
   pathResolve,
   __APP_INFO__
 } from "./build/utils";
+
 
 export default ({ mode }: ConfigEnv): UserConfigExport => {
   const { VITE_CDN, VITE_PORT, VITE_COMPRESSION, VITE_PUBLIC_PATH } =

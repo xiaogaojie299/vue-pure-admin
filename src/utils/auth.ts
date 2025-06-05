@@ -4,7 +4,7 @@ import { storageLocal, isString, isIncludeAllChildren } from "@pureadmin/utils";
 
 export interface DataInfo<T> {
   /** token */
-  accessToken: string;
+  access_token: string;
   /** `accessToken`的过期时间（时间戳） */
   expires: T;
   /** 用于调用刷新accessToken的接口时所需的token */
@@ -46,11 +46,26 @@ export function getToken(): DataInfo<number> {
  * 将`avatar`、`username`、`nickname`、`roles`、`permissions`、`refreshToken`、`expires`这七条信息放在key值为`user-info`的localStorage里（利用`multipleTabsKey`当浏览器完全关闭后自动销毁）
  */
 export function setToken(data: DataInfo<Date>) {
+  let mockLogin = {
+    avatar: "https://avatars.githubusercontent.com/u/52823142",
+    username: "common",
+    nickname: "小林",
+    roles: ["common"],
+    permissions: ["permission:btn:add", "permission:btn:edit"],
+    accessToken: "eyJhbGciOiJIUzUxMiJ9.common",
+    refreshToken: "eyJhbGciOiJIUzUxMiJ9.commonRefresh",
+    expires: "2030/10/30 00:00:00"
+  };
   let expires = 0;
-  const { accessToken, refreshToken } = data;
+  // const { access_token: accessToken, refreshToken } = data;
+  console.log("data-auth", data);
+  const accessToken = data.access_token;
+  const refreshToken = mockLogin.refreshToken;
+
   const { isRemembered, loginDay } = useUserStoreHook();
-  expires = new Date(data.expires).getTime(); // 如果后端直接设置时间戳，将此处代码改为expires = data.expires，然后把上面的DataInfo<Date>改成DataInfo<number>即可
-  const cookieString = JSON.stringify({ accessToken, expires, refreshToken });
+  expires = new Date(mockLogin.expires).getTime(); // 如果后端直接设置时间戳，将此处代码改为expires = data.expires，然后把上面的DataInfo<Date>改成DataInfo<number>即可
+  const cookieString = JSON.stringify({ accessToken, expires });
+  console.log("expires", expires);
 
   expires > 0
     ? Cookies.set(TokenKey, cookieString, {
