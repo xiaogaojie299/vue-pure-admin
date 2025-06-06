@@ -26,7 +26,7 @@ const {
         <el-button
           type="primary"
           :icon="useRenderIcon(AddFill)"
-          @click="openDialog('新增', { leavel: 0 })"
+          @click="openDialog('新增', { level: 0 })"
           >新增一级区域</el-button
         >
       </template>
@@ -41,47 +41,60 @@ const {
         @row-click="handleRowClick"
         border
       >
-        <el-table-column prop="country" label="一级区域">
+        <el-table-column prop="" label="一级区域">
           <template #default="{ row }">
-            <span v-if="!row.children" style="margin-left: 10px">{{
-              row.country
-            }}</span>
-            <strong v-else style="color: #333">{{ row.country }}</strong>
+            <template v-if="row.level === 1">
+              <span v-if="!row.children" style="margin-left: 10px">{{
+                row.country
+              }}</span>
+              <strong v-else style="color: #333">{{ row.country }}</strong>
+            </template>
           </template>
         </el-table-column>
         <el-table-column prop="province" label="二级区域（省）">
           <template #default="{ row }">
+            <template v-if="row.level === 2">
+
+
             <span v-if="!row.children" style="margin-left: 10px">{{
               row.province
             }}</span>
             <strong v-else style="color: #333">{{ row.province }}</strong>
+            </template>
           </template>
         </el-table-column>
 
         <el-table-column prop="market" label="三级区域（市）">
           <template #default="{ row }">
+            <template v-if="row.level === 3">
             <span v-if="!row.children" style="margin-left: 10px">{{
               row.market
             }}</span>
             <strong v-else style="color: #333">{{ row.market }}</strong>
+            </template>
+
           </template>
         </el-table-column>
 
         <el-table-column prop="area" label="四级区域（区）">
           <template #default="{ row }">
+            <template v-if="row.level === 4">
             <span v-if="!row.children" style="margin-left: 10px">{{
               row.area
             }}</span>
             <strong v-else style="color: #333">{{ row.area }}</strong>
+            </template>
           </template>
         </el-table-column>
 
         <el-table-column prop="street" label="五级区域（街道）">
           <template #default="{ row }">
-            <span v-if="!row.children" style="margin-left: 10px">{{
-              row.street
-            }}</span>
-            <strong v-else style="color: #333">{{ row.street }}</strong>
+            <template v-if="row.level === 5">
+              <span v-if="!row.children" style="margin-left: 10px">{{
+                row.street
+              }}</span>
+              <strong v-else style="color: #333">{{ row.street }}</strong>
+            </template>
           </template>
         </el-table-column>
 

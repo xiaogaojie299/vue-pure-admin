@@ -26,7 +26,7 @@ const {
         <el-button
           type="primary"
           :icon="useRenderIcon(AddFill)"
-          @click="openDialog('新增', { leavel: 0 })"
+          @click="openDialog('新增', { level: 0 })"
           >新增一级分类</el-button
         >
       </template>

@@ -53,3 +53,49 @@ export const getRegion = (data?: object) => {
     { data }
   );
 };
+
+/** 获取-区域管理-园区管理 */
+export const getPark = (data?: object) => {
+  return http.request<ResultTable>(
+    "post",
+    baseUrlApi("system/park/page"),
+    { data }
+  );
+};
+
+/** 添加-区域管理-园区管理 */
+export const addPark = (data?: object) => {
+  return http.request<ResultTable>(
+    "post",
+    baseUrlApi("system/park/add"),
+    { data }
+  );
+};
+
+
+/** 添加-区域管理-园区管理 */
+export const getParkDetail = (data?: object) => {
+  return http.request<ResultTable>("post", baseUrlApi("system/park/detail"), {
+    data
+  });
+};
+
+// /system/park/edit
+
+/** 编辑-区域管理-园区管理 */
+export const editPark = (data?: object) => {
+  return http.request<ResultTable>(
+    "post",
+    baseUrlApi("system/park/edit"),
+    { data }
+  );
+};
+
+/** 根据街道id查询园区 */ 
+export const getParkList = (data?: object) => {
+  return http.request<ResultTable>(
+    "post",
+    baseUrlApi("system/park/get-park-list"),
+    { data }
+  );
+};

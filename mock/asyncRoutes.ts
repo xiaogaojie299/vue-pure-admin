@@ -215,6 +215,15 @@ const regionManagement = {
         title: "园区管理"
       },
       component: "/region-management/park/index.vue"
+    },
+    {
+      path: "/region-management/edit-park-detail",
+      name: "RegionManagementEditParkDetail",
+      meta: {
+        title: "园区管理",
+        showMenu: false
+      },
+      component: "/region-management/park/edit-park-detail.vue"
     }
   ]
 };
