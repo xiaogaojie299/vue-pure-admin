@@ -1,4 +1,5 @@
 import { http } from "@/utils/http";
+import { baseUrlApi } from "@/utils/http/baseUrlApi";
 
 type Result = {
   success: boolean;
@@ -45,9 +46,9 @@ export const getMenuList = (data?: object) => {
 };
 
 /** 获取系统管理-部门管理列表 */
-export const getDeptList = (data?: object) => {
-  return http.request<Result>("post", "/dept", { data });
-};
+// export const getDeptList = (data?: object) => {
+//   return http.request<Result>("post", "/dept", { data });
+// };
 
 /** 获取系统监控-在线用户列表 */
 export const getOnlineLogsList = (data?: object) => {
@@ -82,4 +83,20 @@ export const getRoleMenu = (data?: object) => {
 /** 获取角色管理-权限-菜单权限-根据角色 id 查对应菜单 */
 export const getRoleMenuIds = (data?: object) => {
   return http.request<Result>("post", "/role-menu-ids", { data });
+};
+
+export const getDeptList = (data?: object) => {
+  return http.request<Result>("get", baseUrlApi("system/dept/list"), { data });
+};
+
+export const addDept = (data?: object) => {
+  return http.request<Result>("post", baseUrlApi("/system/dept"), { data });
+};
+
+export const editDept = (data?: object) => {
+  return http.request<Result>("put", baseUrlApi("/system/dept"), { data });
+};
+
+export const deleteDept = (data?: object) => {
+  return http.request<Result>("delete", baseUrlApi(`system/dept/${data}`), );
 };

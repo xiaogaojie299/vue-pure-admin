@@ -1,10 +1,12 @@
 import dayjs from "dayjs";
 import { handleTree } from "@/utils/tree";
 import { message } from "@/utils/message";
-import { getDeptList } from "@/api/system";
+import { getDeptList, editDept, addDept, deleteDept } from "@/api/system";
 import { usePublicHooks } from "../../hooks";
 import { addDialog } from "@/components/ReDialog";
 import editForm from "../form/dept.vue";
+import { TOAST_TITLE_SUCCESS } from "@/constants";
+
 
 import { reactive, ref, onMounted, h } from "vue";
 import type { FormItemProps } from "../utils/types";
@@ -35,7 +37,9 @@ export function useDept() {
     onSearch();
   }
 
-  async function onSearch() {}
+  async function onSearch() {
+    initData()
+  }
 
   function onAdd(data) {  
     form.parentId = data.id;
@@ -53,21 +57,26 @@ export function useDept() {
     return newTreeList;
   }
 
-  function openDialog(title = "新增", row?) {
+  function openDialog(title = "新增", _row?) {
+    let row = _row?.data ?? {};
     addDialog({
       title: `${title}部门`,
       props: {
         formInline: {
           higherDeptOptions: formatHigherDeptOptions(cloneDeep(treeData.value)),
           parentId: row?.parentId ?? 0,
-          name: row?.name ?? "",
+          deptName: row?.deptName ?? "",
           principal: row?.principal ?? "",
           phone: row?.phone ?? "",
           email: row?.email ?? "",
           sort: row?.sort ?? 0,
           status: row?.status ?? 1,
-          remark: row?.remark ?? ""
-        },
+          remark: row?.remark ?? "",
+
+          deptId: row?.deptId ?? undefined,
+          orderNum: 1,
+          type: 1 // 类型1内部部门（管理平台只有内部部门） 2外部组织
+        }
       },
       width: "40%",
       draggable: true,
@@ -79,40 +88,45 @@ export function useDept() {
         const FormRef = formRef.value.getRef();
         const curData = options.props.formInline as FormItemProps;
         function chores() {
-          message(`您${title}了部门名称为${curData.name}的这条数据`, {
+          message(`${TOAST_TITLE_SUCCESS}`, {
             type: "success"
           });
+          initData();
           done(); // 关闭弹框
         }
         FormRef.validate(valid => {
           if (valid) {
             console.log("curData", curData);
-            // 表单规则校验通过
-            if (title === "新增") {
-              // 实际开发先调用新增接口，再进行下面操作
+
+            let apiFn = title === "新增" ? addDept : editDept;
+            let params = { ...curData };
+            apiFn(params).then(resp => {
               chores();
-            } else {
-              // 实际开发先调用修改接口，再进行下面操作
-              chores();
-            }
+            });
           }
         });
       }
     });
   }
 
-  function handleDelete(row) {
-    message(`您删除了部门名称为${row.name}的这条数据`, { type: "success" });
-    onSearch();
+  function handleDelete(id) {
+    console.log("deleteDept", deleteDept);
+    deleteDept(id).then(() => {
+      message(TOAST_TITLE_SUCCESS, { type: "success" });
+      onSearch();
+    });
   }
-
-  onMounted(async () => {
+  const  initData = async () => {
     // 归属部门
     const { data } = await getDeptList();
-    higherDeptOptions.value = handleTree(data);
 
-    treeData.value = handleTree(data);
+    higherDeptOptions.value = handleTree( cloneDeep(data), "deptId");
+
+    treeData.value = handleTree(cloneDeep(data), "deptId");
     treeLoading.value = false;
+  }
+  onMounted(async () => {
+    initData()
   });
 
   return {

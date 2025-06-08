@@ -19,8 +19,8 @@ import RiEditCircleFill from "~icons/ri/edit-circle-fill";
 import EpCircleCloseFilled from "~icons/ep/circle-close-filled";
 
 import { cloneDeep, isAllEmpty, deviceDetection } from "@pureadmin/utils";
-
-const { treeData, treeLoading, onSearch, resetForm, openDialog } = useDept();
+import { addDept } from "@/api/system.ts"
+const { treeData, treeLoading, onSearch, resetForm, openDialog, handleDelete } = useDept();
 
 interface Tree {
   id: number;
@@ -39,7 +39,8 @@ const highlightMap = ref({});
 const { proxy } = getCurrentInstance();
 const defaultProps = {
   children: "children",
-  label: "name"
+  label: "deptName"
+
 };
 const buttonClass = computed(() => {
   return [
@@ -108,6 +109,7 @@ function onTreeReset() {
 
 const onEditDept = node => {
   openDialog("修改", node);
+  console.log(node);
 };
 
 const onAddDept = () => {
@@ -121,10 +123,8 @@ const onDeleteDept = (node, data) => {
     type: "warning"
   })
     .then(() => {
-      ElMessage({
-        type: "success",
-        message: "删除成功"
-      });
+      console.log("data", node);
+      handleDelete(node?.data?.deptId)
     })
     .catch(() => {});
 };
@@ -196,7 +196,7 @@ defineExpose({ onTreeReset });
       <el-tree
         ref="treeRef"
         :data="treeData"
-        node-key="id"
+        node-key="deptId"
         size="small"
         :props="defaultProps"
         default-expand-all

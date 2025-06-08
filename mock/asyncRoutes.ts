@@ -221,7 +221,7 @@ const regionManagement = {
       name: "RegionManagementEditParkDetail",
       meta: {
         title: "园区管理",
-        showMenu: false
+        showLink: false
       },
       component: "/region-management/park/edit-park-detail.vue"
     }

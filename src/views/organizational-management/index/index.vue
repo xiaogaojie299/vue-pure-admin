@@ -4,7 +4,7 @@ import { ref, defineOptions } from "vue";
 import { useOrganManagement } from "./hook";
 import { PureTableBar } from "@/components/RePureTableBar";
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
-import Search from "./components/search.vue";
+import Search from "./components/Search.vue";
 
 import Delete from "~icons/ep/delete";
 import Refresh from "~icons/ep/refresh";
@@ -39,7 +39,7 @@ const {
 <template>
   <div class="main">
     <el-card shadow="never">
-      <Search />
+      <Search @onSearch="onSearch" @resetForm="resetForm" />
     </el-card>
 
     <PureTableBar title="组织管理" :columns="columns" @refresh="onSearch">

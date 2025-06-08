@@ -2,7 +2,6 @@
   <div class="upload-image-container">
     <el-upload
       v-model:file-list="fileList"
-      :action="uploadUrl"
       list-type="picture-card"
       :on-preview="handlePictureCardPreview"
       :on-remove="handleRemove"

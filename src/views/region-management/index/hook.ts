@@ -7,12 +7,16 @@ import { addDialog } from "@/components/ReDialog";
 import editForm from "./form.vue";
 import { TOAST_TITLE_SUCCESS } from "@/constants";
 
+import { useTree } from "../treeHook";
+
 import {
   addRegion,
   editRegion,
   getRegion,
   deleteRegion
 } from "@/api/region-management";
+
+const { treeData, loadTreeData } = useTree();
 
 import { type Ref, reactive, ref, onMounted, toRaw, h, nextTick } from "vue";
 
@@ -21,42 +25,14 @@ import type { FormItemProps } from "./types";
 
 export function useRegion() {
   const formRef = ref();
-  const dataList = ref([]);
+  const dataList = ref(treeData);
+
   const loading = ref(true);
   const originalFields = ["country", "province", "market", "area", "street"];
-  const treeData = ref([]);
   async function onSearch() {
     loading.value = true;
   }
 
-  function formatName(data, key = "name") {
-    data.forEach(item => {
-      originalFields.map(field => {
-        if (item[field]) {
-          item[key] = item[field];
-        }
-      });
-    });
-    return data;
-  }
-  // 异步加载树形数据
-  const loadTreeData = async () => {
-    loading.value = true;
-    try {
-      let { data } = await getRegion();
-      data = formatName(data);
-      let treeList = handleTree(data);
-      dataList.value = treeList || [];
-      treeData.value = treeList;
-
-      console.log("treeList", treeList);
-      // const response = await axios.get('/api/industry-category') // 替换为你的接口地址
-      // dataList.value = response.data || []
-    } catch (error) {
-      message("加载产业类型失败");
-      console.error("Failed to load industry categories:", error);
-    }
-  };
   function openDialog(title = "新增", row: any, type = "add") {
     let titlelevelMap = {
       1: "一级区域",

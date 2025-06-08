@@ -1,16 +1,22 @@
 import dayjs from "dayjs";
 import { message } from "@/utils/message";
 import { getKeyList } from "@pureadmin/utils";
-import { getLoginLogsList } from "@/api/system";
+import { getOrgPage } from "@/api/organizational-management";
 import type { PaginationProps } from "@pureadmin/table";
-import { type Ref, reactive, ref, onMounted, toRaw } from "vue";
+import { type Ref, reactive, ref, onMounted, toRaw, computed, watch } from "vue";
 import router from "@/router";
 
+import { useTreeCascader } from "@/views/region-management/treeCascaderHook";
+import { v } from "node_modules/@faker-js/faker/dist/airline-BUL6NtOJ";
+
+const {  handleCascaderChange } = useTreeCascader();
 export function useOrganManagement(tableRef: Ref) {
   const form = reactive({
-    username: "",
-    status: "",
-    loginTime: ""
+      region: [],
+      name: "",
+      natureId: "",
+      orgIndustryId: "",
+      orgTypeId: ""
   });
   const dataList = ref([]);
   const loading = ref(true);
@@ -83,10 +89,13 @@ export function useOrganManagement(tableRef: Ref) {
 
   function handleSizeChange(val: number) {
     console.log(`${val} items per page`);
+    pagination.pageSize = val;
   }
 
   function handleCurrentChange(val: number) {
     console.log(`current page: ${val}`);
+    pagination.currentPage = val;
+
   }
 
   /** 当CheckBox选择项发生变化时会触发该事件 */
@@ -124,14 +133,21 @@ export function useOrganManagement(tableRef: Ref) {
     onSearch();
   }
 
+
   async function onSearch() {
-    loading.value = true;
-    const { data } = await getLoginLogsList(toRaw(form));
+
+    let regionForm = handleCascaderChange(form.region);
+
+    const { data } = await getOrgPage(
+      toRaw({
+        ...form,
+        ...regionForm,
+        pageSize: pagination.pageSize,
+        pageNum: pagination.currentPage
+      })
+    );
     dataList.value = data.list;
     pagination.total = data.total;
-    pagination.pageSize = data.pageSize;
-    pagination.currentPage = data.currentPage;
-
     setTimeout(() => {
       loading.value = false;
     }, 500);
@@ -140,7 +156,7 @@ export function useOrganManagement(tableRef: Ref) {
   const resetForm = formEl => {
     if (!formEl) return;
     formEl.resetFields();
-    onSearch();
+      onSearch();
   };
 
   const handleGoAdd = () => {
@@ -167,6 +183,6 @@ export function useOrganManagement(tableRef: Ref) {
     onSelectionCancel,
     handleCurrentChange,
     handleSelectionChange,
-    handleGoAdd
+    handleGoAdd,
   };
 }

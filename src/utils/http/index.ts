@@ -136,6 +136,10 @@ class PureHttp {
           PureHttp.initConfig.beforeResponseCallback(response);
           return response.data;
         }
+        if ($data.code == 401) {
+          // 清空缓存，退出登录
+          useUserStoreHook().logOut();
+        }
         if ($data.code == 200) {
           $data.success = true;
         }

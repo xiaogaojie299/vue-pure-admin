@@ -1,228 +1,181 @@
 <script setup lang="tsx">
-import { ref, h } from "vue";
+import { ref, h, onMounted, computed, nextTick, defineEmits, watch } from "vue";
 // https://plus-pro-components.com/components/search.html
 import "plus-pro-components/es/components/search/style/css";
 import { type PlusColumn, PlusSearch } from "plus-pro-components";
 
-const state = ref({
-  status: "0",
-  time: new Date().toString()
+import {
+  getOrgNature,
+  getOrgIndustry,
+  getOrgType
+} from "@/api/categories-management";
+
+import { useOrganManagement } from "../hook";
+import { useTree } from "@/views/region-management/treeHook";
+import { useTreeCascader } from "@/views/region-management/treeCascaderHook";
+
+const { treeData, loadTreeData } = useTree();
+const { form, onSearch } = useOrganManagement();
+
+// const emits = defineEmits(["onSearch", "onReset"]);
+
+const allTemplate = ref({
+  label: "全部",
+  value: ""
 });
+const newForm = ref(form);
+
+  watch(
+    () => form,
+    (value) => {
+      newForm.value = value;
+    },
+    { deep: true, immediate: true }
+  );
+
+// 组织性质
+const orgNatureList = ref([allTemplate.value]);
+
+// 产业类型
+const orgIndustryList = ref([allTemplate.value]);
+
+// 组织类型
+const orgTypeList = ref([allTemplate.value]);
+
+const getOrgNatureList = async () => {
+  let { data } = await getOrgNature({ pageSize: 1000, pageNum: 1 });
+
+  let list = data.records || [];
+  const newList = list?.map(item => {
+    return {
+      ...item,
+      value: item.id,
+      label: item.name
+    };
+  });
+  orgNatureList.value = [...orgNatureList.value, ...newList];
+};
+//
+const getOrgIndustryList = async () => {
+  let { data } = await getOrgIndustry({ pageSize: 1000, pageNum: 1 });
+
+  let list = data || [];
+  const newList = list?.map(item => {
+    return {
+      ...item,
+      value: item.id,
+      label: item.name
+    };
+  });
+  orgIndustryList.value = [...orgIndustryList.value, ...newList];
+};
+
+const getOrgTypeList = async () => {
+  let { data } = await getOrgType({ pageSize: 1000, pageNum: 1 });
+
+  let list = data.records || [];
+
+  const newList = list?.map(item => {
+    return {
+      ...item,
+      value: item.id,
+      label: item.name
+    };
+  });
+  orgTypeList.value = [...orgTypeList.value, ...newList];
+};
+const initData = async () => {
+  // 获取组织信息
+  getOrgNatureList();
+  // 产业类型
+  getOrgIndustryList();
+  // 组织分类
+  getOrgTypeList();
+};
+
+onMounted(() => {
+  nextTick(() => {
+    loadTreeData();
+  });
+});
+
+initData();
 
 const columns: PlusColumn[] = [
   {
     label: "区域选择",
-    prop: "title",
+    prop: "region",
+    valueType: "cascader",
+    options: computed(() => treeData.value),
     fieldProps: {
-      // 优先级低于 renderField 的props
-      placeholder: "请输入"
+      placeholder: "请选择区域",
+      props: {
+        checkStrictly: true, // 允许选择任意一级
+        emitPath: true, // 只返回当前选中的值
+        label: "name",
+        value: "id"
+      },
+      clearable: true,
+      filterable: true
     },
+
     colProps: {
-      span: 2
-    },
-    renderField: (_, onChange) => {
-      return h(<div></div>, {
-        // 返回VNode时，需要手动调用 renderField 的onChange 回调把值传给表单
-      });
-    }
-  },
-  {
-    label: "省份",
-    prop: "shengfen",
-    valueType: "cascader",
-    options: [
-      {
-        value: "0",
-        label: "陕西",
-        children: []
-      },
-      {
-        value: "1",
-        label: "山西"
-      }
-    ],
-    colProps: {
-      span: 4
-    }
-  },
-  {
-    label: "省份",
-    prop: "chengshi",
-    valueType: "cascader",
-    options: [
-      {
-        value: "0",
-        label: "陕西",
-        children: []
-      },
-      {
-        value: "1",
-        label: "山西"
-      }
-    ],
-    colProps: {
-      span: 4
-    }
-  },
-  {
-    label: "区县",
-    prop: "quxian",
-    valueType: "cascader",
-    options: [
-      {
-        value: "0",
-        label: "陕西",
-        children: []
-      },
-      {
-        value: "1",
-        label: "山西"
-      }
-    ],
-    colProps: {
-      span: 4
-    }
-  },
-  {
-    label: "街道",
-    prop: "jiedao",
-    valueType: "cascader",
-    options: [
-      {
-        value: "0",
-        label: "陕西",
-        children: []
-      },
-      {
-        value: "1",
-        label: "山西"
-      }
-    ],
-    colProps: {
-      span: 4
-    }
-  },
-  {
-    label: "园区",
-    prop: "yuanqu",
-    valueType: "cascader",
-    options: [
-      {
-        value: "0",
-        label: "陕西",
-        children: []
-      },
-      {
-        value: "1",
-        label: "山西"
-      }
-    ],
-    colProps: {
-      span: 4
+      span: 22
     }
   },
   {
     label: "组织名称",
-    prop: "zuzhimincheng",
-    valueType: "copy"
+    prop: "name",
+    valueType: "copy",
+    colProps: {
+      span: 6
+    }
   },
   {
     label: "组织性质",
-    prop: "zuzhixingzhi",
+    prop: "natureId",
     valueType: "select",
-    options: [
-      {
-        label: "未解决",
-        value: "0",
-        color: "red"
-      },
-      {
-        label: "已解决",
-        value: "1",
-        color: "blue"
-      },
-      {
-        label: "解决中",
-        value: "2",
-        color: "yellow"
-      },
-      {
-        label: "失败",
-        value: "3",
-        color: "red"
-      }
-    ]
+    options: computed(() => orgNatureList.value),
+    fieldProps: {},
+    colProps: {
+      span: 6
+    }
   },
   {
     label: "产业类型",
-    prop: "chanyeleixin",
+    prop: "orgIndustryId",
     valueType: "select",
-    options: [
-      {
-        label: "全部",
-        value: "0"
-      },
-      {
-        label: "互联网",
-        value: "1"
-      },
-      {
-        label: "金融",
-        value: "2"
-      },
-      {
-        label: "教育",
-        value: "3"
-      },
-      {
-        label: "医疗",
-        value: "4"
-      }
-    ]
+    options: computed(() => orgIndustryList.value),
+
+    colProps: {
+      span: 6
+    }
   },
   {
     label: "组织分类",
-    prop: "zuzhifenlei",
+    prop: "orgTypeId",
     valueType: "select",
-    options: [
-      {
-        label: "全部",
-        value: "0"
-      },
-      {
-        label: "互联网",
-        value: "1"
-      },
-      {
-        label: "金融",
-        value: "2"
-      },
-      {
-        label: "教育",
-        value: "3"
-      },
-      {
-        label: "医疗",
-        value: "4"
-      }
-    ]
+    options: computed(() => orgTypeList.value),
+    colProps: {
+      span: 6
+    }
   }
 ];
 
 const handleChange = (values: any) => {
-  console.log(values, "change");
 };
 const handleSearch = (values: any) => {
-  console.log(values, "search");
+  onSearch();
 };
 const handleRest = () => {
   console.log("handleRest");
+  // emits("onReset");
 };
 </script>
 
 <template>
   <PlusSearch
-    v-model="state"
+    v-model="form"
     :columns="columns"
     :show-number="4"
     label-width="120"
@@ -230,5 +183,6 @@ const handleRest = () => {
     @change="handleChange"
     @search="handleSearch"
     @reset="handleRest"
-  />
+  >
+  </PlusSearch>
 </template>

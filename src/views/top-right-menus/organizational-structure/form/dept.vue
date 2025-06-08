@@ -50,8 +50,8 @@ defineExpose({ getRef });
             class="w-full"
             :options="newFormInline.higherDeptOptions"
             :props="{
-              value: 'id',
-              label: 'name',
+              value: 'deptId',
+              label: 'deptName',
               emitPath: false,
               checkStrictly: true
             }"
@@ -60,7 +60,7 @@ defineExpose({ getRef });
             placeholder="请选择上级部门"
           >
             <template #default="{ node, data }">
-              <span>{{ data.name }}</span>
+              <span>{{ data.deptName }}</span>
               <span v-if="!node.isLeaf"> ({{ data.children.length }}) </span>
             </template>
           </el-cascader>
@@ -68,9 +68,9 @@ defineExpose({ getRef });
       </re-col>
 
       <re-col>
-        <el-form-item label="部门名称" prop="name">
+        <el-form-item label="部门名称" prop="deptName">
           <el-input
-            v-model="newFormInline.name"
+            v-model="newFormInline.deptName"
             clearable
             placeholder="请输入部门名称"
           />

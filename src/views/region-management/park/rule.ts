@@ -23,7 +23,7 @@ export const formRules = reactive(<FormRules>{
       trigger: "change"
     }
   ],
-  logo: [
+  logoUrl: [
     {
       required: true,
       message: "请上传logo",
@@ -56,12 +56,12 @@ export const formRules = reactive(<FormRules>{
       message: "地址长度在5到100个字符之间",
       trigger: "blur"
     }
-  ],
-  longitude: [
-    {
-      required: true,
-      message: "经度不能为空",
-      trigger: "change"
-    }
   ]
+  // longitude: [
+  //   {
+  //     required: true,
+  //     message: "经度不能为空",
+  //     trigger: "change"
+  //   }
+  // ]
 });

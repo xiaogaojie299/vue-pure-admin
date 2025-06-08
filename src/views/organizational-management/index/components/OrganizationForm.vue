@@ -25,22 +25,7 @@
 
     <!-- 营业执照 -->
     <el-form-item label="营业执照：">
-      <el-upload
-        class="upload-demo"
-        action="https://jsonplaceholder.typicode.com/posts/"
-        :on-preview="handlePreview"
-        :on-remove="handleRemove"
-        :before-remove="beforeRemove"
-        multiple
-        :limit="3"
-        :on-exceed="handleExceed"
-        :file-list="form.businessLicense"
-      >
-        <el-button size="small" type="primary">点击上传</el-button>
-        <template #tip>
-          <div class="el-upload__tip">只能上传jpg/png文件</div>
-        </template>
-      </el-upload>
+              <!-- <ReUploadImage v-model="form.logoUrl" :multiple="false" :limit="1" /> -->
     </el-form-item>
 
     <!-- 所在园区 -->
@@ -291,6 +276,7 @@ import { reactive, ref } from "vue";
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
 import Segmented, { type OptionsType } from "@/components/ReSegmented";
 import Editor from "@/components/Editor.vue";
+import ReUploadImage from "@/components/ReUploadImage/index.vue";
 
 import Refresh from "~icons/ep/refresh";
 import EpQuestionFilled from "~icons/ep/question-filled";
