@@ -119,6 +119,15 @@ export const getOrgNature = (data?: object) => {
   );
 };
 
+export const getOrgNatureTree = (data?: object) => {
+  return http.request<ResultTable>(
+    "post",
+    baseUrlApi("system/org-nature/tree-list"),
+    { data }
+  );
+};
+
+
 /** 修改-分类管理-组织性质 */
 export const updateOrgNature = (data?: object) => {
   return http.request<ResultTable>(

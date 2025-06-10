@@ -39,13 +39,13 @@ export function usePark(tableRef?: Ref) {
   });
   const statusMap = {
     0: {
-      showLable: "展示",
+      showLabel: "展示",
       label: "正常",
       reverseLable: "隐藏",
       value: 0
     },
     1: {
-      showLable: "隐藏",
+      showLabel: "隐藏",
       label: "隐藏",
       reverseLable: "展示",
       value: 1

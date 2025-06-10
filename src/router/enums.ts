@@ -4,7 +4,17 @@ const home = 0, // 平台规定只有 home 路由的 rank 才能为 0 ，所以�
   organizational = 1,
   categories = 2,
   region = 3,
+  systemSet = 10,
   permission = 12,
-  system = 13,
-  error = 14;
-export { home, organizational, categories, permission, system, error, region };
+  system = 14,
+  error = 16;
+export {
+  home,
+  organizational,
+  categories,
+  permission,
+  system,
+  error,
+  region,
+  systemSet
+};

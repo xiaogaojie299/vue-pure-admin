@@ -1,5 +1,6 @@
 import { http } from "@/utils/http";
 import { baseUrlApi } from "@/utils/http/baseUrlApi";
+import { get } from "sortablejs";
 
 type Result = {
   success: boolean;
@@ -37,7 +38,9 @@ export const getRoleIds = (data?: object) => {
 
 /** 获取系统管理-角色管理列表 */
 export const getRoleList = (data?: object) => {
-  return http.request<ResultTable>("post", "/role", { data });
+  return http.request<ResultTable>("get", baseUrlApi("system/role/list"), {
+    data
+  });
 };
 
 /** 获取系统管理-菜单管理列表 */
@@ -98,5 +101,113 @@ export const editDept = (data?: object) => {
 };
 
 export const deleteDept = (data?: object) => {
-  return http.request<Result>("delete", baseUrlApi(`system/dept/${data}`), );
+  return http.request<Result>("delete", baseUrlApi(`system/dept/${data}`));
 };
+
+export const getBannerList = (data?: object) => {
+  return http.request<Result>("post", baseUrlApi(`system/region-banner/page`), {
+    data
+  });
+};
+
+export const addBanner = (data?: object) => {
+  return http.request<Result>(
+    "post",
+    baseUrlApi(`/system/region-banner/save`),
+    { data }
+  );
+};
+
+export const editBanner = (data?: object) => {
+  return http.request<Result>(
+    "post",
+    baseUrlApi(`/system/region-banner/edit`),
+    { data }
+  );
+};
+export const deleteBanner = (data?: object) => {
+  return http.request<Result>(
+    "post",
+    baseUrlApi(`/system/region-banner/delete`),
+    { data }
+  );
+};
+
+export const getIconList = (data?: object) => {
+  return http.request<Result>("post", baseUrlApi(`system/icon/page`), {
+    data
+  });
+};
+
+export const addIcon = (data?: object) => {
+  return http.request<Result>("post", baseUrlApi(`/system/icon/save`), {
+    data
+  });
+};
+
+export const editIcon = (data?: object) => {
+  return http.request<Result>("post", baseUrlApi(`/system/icon/edit`), {
+    data
+  });
+};
+export const deleteIcon = (data?: object) => {
+  return http.request<Result>("post", baseUrlApi(`/system/icon/delete`), {
+    data
+  });
+};
+
+export const getGreement = (data?: object) => {
+  return http.request<Result>("post", baseUrlApi(`system/agreement/query`), {
+    data
+  });
+};
+
+export const saveGreement = (data?: object) => {
+  return http.request<Result>("post", baseUrlApi(`system/agreement/save`), {
+    data
+  });
+};
+export const getOrgFieldGroup = (data?: object) => {
+  return http.request<Result>(
+    "post",
+    baseUrlApi(`system/org-field/get-group`),
+    {
+      data
+    }
+  );
+};
+
+
+export const saveOrgFieldGroup = (data?: object) => {
+  return http.request<Result>("post", baseUrlApi(`system/org-field/save`), {
+    data
+  });
+};
+
+
+export const editOrgField = (data?: object) => {
+  return http.request<Result>("post", baseUrlApi(`system/org-field/edit`), {
+    data
+  });
+};
+
+export const getOrgFieldGroupChild = (data?: object) => {
+  return http.request<Result>(
+    "post",
+    baseUrlApi(`system/org/get-child-filed`),
+    {
+      data
+    }
+  );
+};
+
+export const getGroupFiled = (data?: object) => {
+  return http.request<Result>(
+    "post",
+    baseUrlApi(`system/org-field/get-group-filed`),
+    {
+      data
+    }
+  );
+};
+

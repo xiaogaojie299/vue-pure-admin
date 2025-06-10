@@ -1,15 +1,16 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import { usePark } from "./hook";
+import { useIcon } from "./hook";
 import { PureTableBar } from "@/components/RePureTableBar";
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
 
 import Plane from "~icons/ri/plane-line";
 import AddFill from "~icons/ri/add-circle-line";
 import Refresh from "~icons/ep/refresh";
+import {  bannerStatusMap } from "../constants";
 
 defineOptions({
-  name: "RegionManagementPark"
+  name: "SystemSettingBanner"
 });
 
 const formRef = ref();
@@ -18,25 +19,21 @@ const tableRef = ref();
 const {
   filterParams,
   loading,
-  statusMap,
   columns,
   dataList,
-  treeData,
   selectedNum,
   pagination,
+  handleChangeStatus,
   onSearch,
   resetForm,
-  goEditDetail,
   onSelectionCancel,
   onbatchDel,
   openDialog,
-  handleCascaderChange,
-  handleChangeStatus,
   handleSizeChange,
   handleCurrentChange,
   handleSelectionChange,
   handleDelete
-} = usePark(tableRef);
+} = useIcon(tableRef);
 </script>
 
 <template>
@@ -47,7 +44,7 @@ const {
       :model="filterParams"
       class="search-form bg-bg_color w-full pl-8 pt-[12px] overflow-auto"
     >
-      <el-form-item label="园区名称：" prop="name">
+      <el-form-item label="ICON标题：" prop="name">
         <el-input
           v-model="filterParams.name"
           placeholder="请输入"
@@ -55,22 +52,13 @@ const {
           class="w-[180px]!"
         />
       </el-form-item>
-      <el-form-item label="所属区域：" prop="region">
-      <el-cascader
-        v-model="filterParams.region"
-        :options="treeData"
-        :props="{ 
-          checkStrictly: true, // 允许选择任意一级
-          emitPath: true,     // 只返回当前选中的值
-          label: 'name',
-          value: 'id'
-        }"
-        @change="handleCascaderChange"
-        placeholder="请选择区域"
-        clearable
-        filterable
-      />
-</el-form-item>
+      <el-form-item label="ICON状态：" prop="status">
+          <el-select class="w-[200px]!" v-model="filterParams.status" placeholder="全部">
+            <el-option :label="'全部'" :value="undefined"></el-option>
+            <el-option v-for="item in bannerStatusMap" :key="item.value" :value="item.value" :label="item.showLabel"
+          ></el-option>
+          </el-select>
+      </el-form-item>
       <el-form-item>
         <el-button
           type="primary"
@@ -87,7 +75,7 @@ const {
     </el-form>
 
     <PureTableBar
-      title="园区管理"
+      title="ICON管理"
       :columns="columns"
       @refresh="onSearch"
     >
@@ -96,9 +84,9 @@ const {
         <el-button
           type="primary"
           :icon="useRenderIcon(AddFill)"
-          @click="goEditDetail()"
+          @click="openDialog('新增', { username: ''})"
         >
-          新增
+          添加ICON
         </el-button>
       </template>
       <template v-slot="{ size, dynamicColumns }">
@@ -145,40 +133,21 @@ const {
           @page-size-change="handleSizeChange"
           @page-current-change="handleCurrentChange"
         >
+
           <template #status="{ row }">
               <el-switch
                 v-model="row.status"
                 inline-prompt
                 :active-value="0"
                 :inactive-value="1"
-                active-text="展示中"
+                active-text="已上架"
                 disabled
-                inactive-text="已隐藏"
+                inactive-text="已下架"
               />
           </template>
-          <template #operation="{ row }">
-                <el-button
-                  link
-                  type="primary"
-                  :size="size"
-                  @click="goEditDetail(row.id)"
-                >
-                  编辑
-                </el-button>
-                <el-popconfirm title="是否确认删除此园区?" @confirm="handleDelete(row)">
-                  <template #reference>
-                    <el-button
-                        class="reset-margin"
-                        link
-                        type="danger"
-                        :size="size"
-                      >
-                        删除
-                      </el-button>
-                  </template>
-                </el-popconfirm>
 
-                <el-popconfirm :title="`是否${statusMap[row.status]?.reverseLable}确认此园区?`" @confirm="handleChangeStatus(row)">
+          <template #operation="{ row }">
+                <el-popconfirm :title="`是否${bannerStatusMap[row.status]?.reverseLable}确认此ICON?`" @confirm="handleChangeStatus(row)">
                   <template #reference>
                     <el-button
                         class="reset-margin"
@@ -187,7 +156,29 @@ const {
                         :size="size"
 
                       >
-                        {{ statusMap[row.status]?.reverseLable }}
+                        {{ bannerStatusMap[row.status]?.reverseLable }}
+                      </el-button>
+                  </template>
+                </el-popconfirm>
+
+                <el-button
+                  link
+                  type="primary"
+                  :size="size"
+                  @click="openDialog('编辑', row)"
+                >
+                  编辑
+                </el-button>
+                <el-button type="primary" link @click="openDialog('预览', row)">详情</el-button>
+                <el-popconfirm title="是否确认删除?" @confirm="handleDelete(row)">
+                  <template #reference>
+                    <el-button
+                        class="reset-margin"
+                        link
+                        type="danger"
+                        :size="size"
+                      >
+                        删除
                       </el-button>
                   </template>
                 </el-popconfirm>

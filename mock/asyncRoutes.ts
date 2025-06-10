@@ -5,7 +5,8 @@ import {
   permission,
   organizational,
   categories,
-  region
+  region,
+  systemSet
 } from "@/router/enums";
 
 /**
@@ -22,14 +23,7 @@ const systemManagementRouter = {
     rank: system
   },
   children: [
-    {
-      path: "/system/user/index",
-      name: "SystemUser",
-      meta: {
-        icon: "ri:admin-line",
-        title: "menus.pureUser"
-      }
-    },
+    
     {
       path: "/system/role/index",
       name: "SystemRole",
@@ -228,6 +222,54 @@ const regionManagement = {
   ]
 };
 
+
+const systemSetting = {
+  path: "/system-setting",
+  name: "SystemSetting",
+  meta: {
+    icon: "ep:price-tag",
+    title: "系统设置",
+    rank: systemSet
+  },
+  children: [
+    {
+      path: "/system-setting/banner",
+      name: "SystemSettingBanner",
+      meta: {
+        title: "banner管理"
+      },
+      component: "/system-setting/banner/index.vue"
+    },
+
+    {
+      path: "/system-setting/icon",
+      name: "SystemSettingIcon",
+      meta: {
+        title: "Icon管理"
+      },
+      component: "/system-setting/icon/index.vue"
+    },
+
+    {
+      path: "/system-setting/agreement",
+      name: "SystemSettingAgreement",
+      meta: {
+        title: "协议管理"
+      },
+      component: "/system-setting/agreement/index.vue"
+    },
+
+    {
+      path: "/system-setting/org-filed",
+      name: "SystemSettingOrgFiled",
+      meta: {
+        title: "组织配置管理"
+      },
+      component: "/system-setting/org-filed/index.vue"
+    }
+  ]
+};
+
 const organizationalStructure = {
   path: "/organizational-structure",
   isFixed: true,
@@ -260,7 +302,8 @@ export default defineFakeRoute([
           organizationalStructure,
           organizationalManagement,
           categoriesManagement,
-          regionManagement
+          regionManagement,
+          systemSetting
         ]
       };
     }
