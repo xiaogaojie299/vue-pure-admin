@@ -119,6 +119,14 @@ const organizationalManagement = {
       component: "organizational-management/index/index.vue"
     },
     {
+      path: "/organizational-structure/org-user",
+      name: "OrganizationalManagementOrgUser",
+      meta: {
+        title: "组织用户管理"
+      },
+      component: "organizational-management/user/index.vue"
+    },
+    {
       path: "/organizational-structure/add",
       name: "OrganizationalManagementAdd",
       meta: {
@@ -127,6 +135,33 @@ const organizationalManagement = {
       },
       component: "organizational-management/index/add.vue"
     },
+    {
+      path: "/organizational-structure/details",
+      name: "OrganizationalManagementDetails",
+      meta: {
+        title: "组织详情",
+        showLink: false
+      },
+      component: "organizational-management/index/details.vue"
+    },
+
+    {
+      path: "/organizational-structure/edit-log",
+      name: "OrganizationalManagementEditLog",
+      meta: {
+        title: "修改日志",
+        showLink: false
+      },
+      component: "organizational-management/index/edit-log.vue"
+    },
+    {
+      path: "/organizational-structure/score",
+      name: "OrganizationalManagementScore",
+      meta: {
+        title: "创新积分权重设置"
+      },
+      component: "organizational-management/score/index.vue"
+    }
   ]
 };
 
@@ -188,7 +223,7 @@ const regionManagement = {
   path: "/region-management",
   name: "RegionManagement",
   meta: {
-    icon: "ep:price-tag",
+    icon: "ep:menu",
     title: "区域管理",
     rank: region
   },
@@ -227,7 +262,7 @@ const systemSetting = {
   path: "/system-setting",
   name: "SystemSetting",
   meta: {
-    icon: "ep:price-tag",
+    icon: "ri:settings-3-line",
     title: "系统设置",
     rank: systemSet
   },

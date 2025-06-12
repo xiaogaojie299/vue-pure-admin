@@ -32,11 +32,27 @@ const {
 
 // el-tree-select 配置
 const defaultProps = {
-  multiple: false,
+  multiple: true,
   label: "name",
   value: "id",
   children: "children"
 };
+const handleChangeOrgType = (row, key='orgTypeId') => {
+  const selectedValues = [...(row[key] || [])]; // 拷贝一份避免直接修改 props
+
+  // 判断是否包含 "all"
+  const hasSelectAll = selectedValues.some(path => path.includes('0'));
+
+  if (hasSelectAll) {
+    // 如果选中了 "全选"，则只保留它
+    row[key] = [['0']];
+  } else {
+    // 否则确保没有残留的 "全选" 节点（比如手动输入或粘贴等边界情况）
+    const filtered = selectedValues.filter(path => !path.includes('0'));
+    row[key] = filtered;
+  }
+};
+
 </script>
 
 <template>
@@ -48,7 +64,7 @@ const defaultProps = {
         <el-button
           type="primary"
           :icon="useRenderIcon(AddFill)"
-          @click="openDialog('新增', { name: '' })"
+          @click.stop="openDialog('新增', { name: '' })"
         >
           添加分组
         </el-button>
@@ -92,7 +108,9 @@ const defaultProps = {
         </el-table-column>
         <el-table-column prop="type" label="字段类型">
           <template #default="{ row }">
-            <div v-if="isFirstMenu"></div>
+            <div v-if="isFirstMenu">
+              {{ orgFileTypeList[row.type - 1].label }}
+            </div>
             <div v-else>
               <el-select v-model="row.type" placeholder="请选择">
                 <el-option
@@ -108,24 +126,23 @@ const defaultProps = {
         </el-table-column>
         <el-table-column prop="orgTypeId" label="使用组织类型">
           <template #default="{ row }">
-
-            <div v-if="isFirstMenu">{{ row.orgTypeId }}</div>
+            <div v-if="isFirstMenu">所有</div>
             <div v-else>
-              {{ row.orgTypeId }}
-              <el-cascader
-                v-model="row.orgTypeId"
-                :options="natureList"
-                :props="defaultProps"
-                clearable
-                filterable
-              >
-              </el-cascader>
+             <el-cascader
+              v-model="row.orgTypeId"
+              :props="defaultProps"
+              :options="natureList"
+              collapse-tags
+              clearable
+              filterable
+              @change="handleChangeOrgType(row)"
+            />
             </div>
           </template>
         </el-table-column>
         <el-table-column prop="status" label="启/禁用">
           <template #default="{ row }">
-            <div v-if="isFirstMenu">{{ row.status }}</div>
+            <div v-if="isFirstMenu">{{ row.status === STATUS_ORG_FIELD_ON ? '启用' :'禁用' }}</div>
             <div v-else>
               <el-switch
                 v-model="row.status"
@@ -140,16 +157,9 @@ const defaultProps = {
         </el-table-column>
         <el-table-column prop="edit" label="修改权限">
           <template #default="{ row }">
-            <div v-if="isFirstMenu">{{ row.edit }}</div>
+            <div v-if="isFirstMenu">{{ row.edit === EDIT_ORG_FIELD_OFF ? '否' :'是' }}
+            </div>
             <div v-else>
-              <!-- <el-switch
-                  v-model="row.edit"
-                  inline-prompt
-                  :active-value="EDIT_ORG_FIELD_ON"
-                  :inactive-value="EDIT_ORG_FIELD_OFF"
-                  active-text="是"
-                  inactive-text="否"
-                /> -->
               <el-select v-model="row.edit">
                 <el-option
                   v-for="item in editOrgFieldList"
@@ -164,14 +174,16 @@ const defaultProps = {
         </el-table-column>
         <el-table-column prop="queryScope" label="查看权限">
           <template #default="{ row }">
-            <div v-if="isFirstMenu">{{ row.queryScope }}</div>
+            <div v-if="isFirstMenu">所有</div>
             <div v-else>
               <el-cascader
                 v-model="row.queryScope"
                 :options="natureList"
                 :props="defaultProps"
+                collapse-tags
                 clearable
                 filterable
+              @change="handleChangeOrgType(row,'queryScope')"
               >
               </el-cascader>
             </div>

@@ -4,12 +4,20 @@ import {
   getOrgFieldGroup,
   saveOrgFieldGroup,
   editOrgField,
-  getGroupFiled
+  getGroupFiled,
+  saveOrgFields,
+  getUserInfo,
 } from "@/api/system.ts";
 import { getOrgNatureTree } from "@/api/categories-management";
 
 import { generateMockData } from "../constants";
 import { addDialog } from "@/components/ReDialog";
+
+import {
+  convertArrayToString,
+  convertStringToArray,
+  convertStringToArrayOrItemStr
+} from "@/utils/common";
 import { message } from "@/utils/message";
 import { TOAST_TITLE_SUCCESS } from "@/constants";
 
@@ -40,14 +48,23 @@ const getNatureList = async () => {
     pageSize: 1000,
     pageNum: 1
   });
-  natureList.value = data;
-  console.log('树形结构', natureList.value);
+  natureList.value = [{
+      id: '0',
+      name: '全选',
+      children: []
+    }, ...data];
 };
   
   const getGroupChildField = () => {
     getGroupFiled({
       parentId: menuItems.value[currentMenu.value]?.id || 1
     }).then(res => {
+      let list = res.data;
+      list = list.map(item => {
+         item.orgTypeId = convertStringToArrayOrItemStr(item.orgTypeId);
+         item.queryScope = convertStringToArrayOrItemStr(item.queryScope);
+        return item;
+      });
       tableData.value = res.data;
     });
   };
@@ -75,13 +92,31 @@ const getNatureList = async () => {
   
 
   const handleSubmit = () => {
+    if (tableData.value.length === 0) {
+      return message('请添加字段', {
+        type: "error"
+      });
+    }
     ElMessageBox.confirm("保存后新增字段的字段类型将不可修改，请仔细核对?", "提示", {
       confirmButtonText: "确认",
       cancelButtonText: "关闭",
       type: "warning"
     })
       .then(() => {
-        console.log("保存的list", tableData.value);
+        let params = [...tableData.value];
+        params.map(item => {
+          item.orgTypeId =  convertArrayToString(item.orgTypeId);
+          item.queryScope = convertArrayToString(item.queryScope);
+          item.parentId = menuItems.value[currentMenu.value]?.id;
+          return item;
+        });
+        saveOrgFields(params).then(resp => {
+          message("保存成功", {
+            type: "success"
+          });
+          getGroupChildField();
+        });
+        console.log("保存的list", params);
       })
       .catch(() => {});
   }
@@ -119,7 +154,7 @@ const getNatureList = async () => {
             // 表单规则校验通过  原型上没有编辑，先留着可能之后会加
             let apiFn = title === "新增" ? saveOrgFieldGroup : editOrgField;
             await apiFn({ ...curData }).then(() => {
-              chores();
+
             });
           }
         });
@@ -138,9 +173,9 @@ const getNatureList = async () => {
   const initData = () => {
     onSearch();
     getNatureList();  // 获取组织性质
+
   }
   onMounted(() => {
-    onSearch();
     initData();
   });
 

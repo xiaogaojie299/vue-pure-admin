@@ -183,9 +183,6 @@ const {
                         删除
                       </el-button>
                   </template>
-
-
-                  
                 </el-popconfirm>
           </template>
         </pure-table>

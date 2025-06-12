@@ -79,7 +79,28 @@ class PureHttp {
           ? config
           : new Promise(resolve => {
               const data = getToken();
-              if (data) {
+            if (data) {
+              const orgId = useUserStoreHook().orgId ?? "";
+              
+              let isUploadApi = config.url.includes("/upload");
+              if (!isUploadApi) {
+
+                if (config.method == "get") {
+                  // GET 请求加到 params 中
+                  config.params = {
+                    ...config.data,
+                    ...config.params,
+                    orgId
+                  };
+                } else if (["post", "put"].includes(config.method)) {
+                  // POST 请求加到 data 中
+                  config.data = {
+                    ...config.data,
+                    orgId
+                  };
+                }
+              }
+
                 const now = new Date().getTime();
                 const expired = parseInt(data.expires) - now <= 0;
                 if (expired) {
@@ -121,7 +142,6 @@ class PureHttp {
     const instance = PureHttp.axiosInstance;
     instance.interceptors.response.use(
       (response: PureHttpResponse) => {
-        console.log("请求成功", response);
 
         const $data = response.data;
         const $config = response.config;

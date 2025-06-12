@@ -212,7 +212,7 @@ export function useIcon(tableRef: Ref) {
                   let apiFn = title === "新增" ? addIcon : editIcon;
                   let params = { ...curData };
 
-                  await apiFn({ ...params, id: row.id ?? undefined }).then(
+                  await apiFn({ ...params, id: row?.id ?? undefined }).then(
                     () => {
                       if (title === "新增") {
                         pagination.currentPage = 1;

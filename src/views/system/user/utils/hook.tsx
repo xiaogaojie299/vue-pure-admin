@@ -21,7 +21,7 @@ import {
   getRoleIds,
   getDeptList,
   getUserList,
-  getAllRoleList
+  getRoleList
 } from "@/api/system";
 import {
   ElForm,
@@ -335,6 +335,8 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
       beforeSure: (done, { options }) => {
         const FormRef = formRef.value.getRef();
         const curData = options.props.formInline as FormItemProps;
+
+        console.log("curData", curData);
         function chores() {
           message(`您${title}了用户名称为${curData.username}的这条数据`, {
             type: "success"
@@ -498,12 +500,14 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
 
     // 归属部门
     const { data } = await getDeptList();
+
     higherDeptOptions.value = handleTree(data);
     treeData.value = handleTree(data);
     treeLoading.value = false;
 
     // 角色列表
-    roleOptions.value = (await getAllRoleList()).data;
+    roleOptions.value = (await getRoleList()).data;
+    
   });
 
   return {

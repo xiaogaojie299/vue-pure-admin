@@ -17,8 +17,8 @@
             <slot v-else name="default">
               <div
                 v-for="item in anchorItems"
-                :key="item.id"
-                :id="item.id.substring(1)"
+                :key="item.nodeId"
+                :id="item.nodeId.substring(1)"
                 class="section"
                 :style="sectionStyle"
               >
@@ -44,8 +44,8 @@
           >
             <el-anchor-link
               v-for="item in anchorItems"
-              :key="item.id"
-              :href="item.id"
+              :key="item.nodeId"
+              :href="item.nodeId"
               :title="item.title"
             />
           </el-anchor>
@@ -62,7 +62,7 @@ import { ref, onMounted, watch } from 'vue';
 const props = defineProps({
   // 锚点数据
   anchors: {
-    type: Array as () => { title: string; id: string }[],
+    type: Array as () => { title: string; nodeId: string }[],
     required: true
   },
   // 内容高度

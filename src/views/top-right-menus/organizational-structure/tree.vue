@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
-import { ref, computed, watch, getCurrentInstance, h } from "vue";
+import { ref, computed, watch, getCurrentInstance, h , onMounted} from "vue";
 import { addDialog } from "@/components/ReDialog";
 import { useDept } from "./utils/deptHook.tsx";
 
@@ -39,8 +39,7 @@ const highlightMap = ref({});
 const { proxy } = getCurrentInstance();
 const defaultProps = {
   children: "children",
-  label: "deptName"
-
+  label: "name"
 };
 const buttonClass = computed(() => {
   return [
@@ -72,6 +71,9 @@ const filterNode = (value: string, data: Tree) => {
 
 function nodeClick(value) {
   const nodeId = value.$treeNodeId;
+  console.log("nodeId", nodeId);
+  console.log("highlightMap", highlightMap.value);
+
   highlightMap.value[nodeId] = highlightMap.value[nodeId]?.highlight
     ? Object.assign({ id: nodeId }, highlightMap.value[nodeId], {
         highlight: false
@@ -84,6 +86,7 @@ function nodeClick(value) {
       v.highlight = false;
     }
   });
+  console.log(value, );
   emit(
     "tree-select",
     highlightMap.value[nodeId]?.highlight
@@ -133,6 +136,11 @@ watch(searchValue, val => {
   treeRef.value!.filter(val);
 });
 
+onMounted(() => {
+  setTimeout(() => {
+    console.log("treeData213", treeData.value);
+  }, 5000);
+});
 defineExpose({ onTreeReset });
 </script>
 
@@ -196,7 +204,7 @@ defineExpose({ onTreeReset });
       <el-tree
         ref="treeRef"
         :data="treeData"
-        node-key="deptId"
+        node-key="id"
         size="small"
         :props="defaultProps"
         default-expand-all

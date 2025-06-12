@@ -118,11 +118,17 @@ export function useDept() {
   }
   const  initData = async () => {
     // 归属部门
-    const { data } = await getDeptList();
+    let  { data } = await getDeptList();
+    data = data?.map(v => {
+      return {
+        ...v,
+        name: v.deptName,
+        id: v.deptId
+      };
+    });
+    higherDeptOptions.value = handleTree( cloneDeep(data));
 
-    higherDeptOptions.value = handleTree( cloneDeep(data), "deptId");
-
-    treeData.value = handleTree(cloneDeep(data), "deptId");
+    treeData.value = handleTree(cloneDeep(data));
     treeLoading.value = false;
   }
   onMounted(async () => {

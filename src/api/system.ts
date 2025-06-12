@@ -1,6 +1,5 @@
 import { http } from "@/utils/http";
 import { baseUrlApi } from "@/utils/http/baseUrlApi";
-import { get } from "sortablejs";
 
 type Result = {
   success: boolean;
@@ -43,9 +42,39 @@ export const getRoleList = (data?: object) => {
   });
 };
 
+export const addRole = (data?: object) => {
+  return http.request<ResultTable>("post", baseUrlApi("system/role"), { data });
+};
+export const editRole = (data?: object) => {
+  return http.request<ResultTable>(
+    "put",
+    baseUrlApi("system/role"),
+    { data }
+  );
+};
+export const deleteRole = (data?: object) => {
+  return http.request<ResultTable>(
+    "delete",
+    baseUrlApi("system/role"),
+    { data }
+  );
+};
+
 /** 获取系统管理-菜单管理列表 */
 export const getMenuList = (data?: object) => {
   return http.request<Result>("post", "/menu", { data });
+};
+
+export const addMenu = (data?: object) => {
+  return http.request<Result>("post", baseUrlApi("/system/emnu"), { data });
+};
+
+export const editMenu = (data?: object) => {
+  return http.request<Result>("put", baseUrlApi("/system/emnu"), { data });
+};
+
+export const deletMenu = (data?: object) => {
+  return http.request<Result>("put", baseUrlApi(`/system/menu/${data}`));
 };
 
 /** 获取系统管理-部门管理列表 */
@@ -78,14 +107,12 @@ export const getSystemLogsDetail = (data?: object) => {
   return http.request<Result>("post", "/system-logs-detail", { data });
 };
 
-/** 获取角色管理-权限-菜单权限 */
-export const getRoleMenu = (data?: object) => {
-  return http.request<Result>("post", "/role-menu", { data });
-};
 
 /** 获取角色管理-权限-菜单权限-根据角色 id 查对应菜单 */
-export const getRoleMenuIds = (data?: object) => {
-  return http.request<Result>("post", "/role-menu-ids", { data });
+export const getRoleMenu = (data?: object) => {
+  return http.request<Result>("get", baseUrlApi("system/menu/treeselect"), {
+    data
+  });
 };
 
 export const getDeptList = (data?: object) => {
@@ -211,3 +238,30 @@ export const getGroupFiled = (data?: object) => {
   );
 };
 
+// 批量保存
+export const saveOrgFields= (data?: object) => {
+  return http.request<Result>(
+    "post",
+    baseUrlApi(`system/org-field/save`),
+    {
+      data
+    }
+  );
+};
+
+export const getUserInfo = () => {
+  return http.request<Result>(
+    "get",
+    baseUrlApi(`system/user/getInfo`),
+    {}
+  );
+}
+export const getAllOrg = (data?: object) => {
+  return http.request<ResultTable>(
+    "post",
+    baseUrlApi("system/org/get-all-org"),
+    {
+      data
+    }
+  );
+};

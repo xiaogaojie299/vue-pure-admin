@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, defineOptions } from "vue";
+import { ref, defineOptions, onMounted } from "vue";
 
 import { useOrganManagement } from "./hook";
 import { PureTableBar } from "@/components/RePureTableBar";
@@ -16,7 +16,9 @@ defineOptions({
 
 const formRef = ref();
 const tableRef = ref();
-
+onMounted(() => {
+  onSearch()
+})
 const {
   form,
   loading,
@@ -32,7 +34,11 @@ const {
   onSelectionCancel,
   handleCurrentChange,
   handleSelectionChange,
-  handleGoAdd
+  handleGoAdd,
+  handleGoEdit,
+  handleDelete,
+  handleGoDetails,
+  handleGoEditLog
 } = useOrganManagement(tableRef);
 </script>
 
@@ -94,7 +100,56 @@ const {
           @selection-change="handleSelectionChange"
           @page-size-change="handleSizeChange"
           @page-current-change="handleCurrentChange"
-        />
+        >
+          <template #handle="{row}"> 
+            <el-button
+              type="primary"
+              :size="size"
+              @click="handleGoEdit(row)"
+              link
+            >
+              编辑
+            </el-button>
+
+            <el-button
+              type="primary"
+              :size="size"
+              link
+              @click="handleGoDetails(row)"
+            >
+              查看详情
+            </el-button>
+
+            <el-button
+              type="primary"
+              :size="size"
+              link
+            >
+              支付方式设置
+            </el-button>
+            <el-button
+              type="primary"
+              :size="size"
+              link
+              @click="handleGoEditLog(row)"
+            >
+              修改日志
+            </el-button>
+
+                <el-popconfirm title="是否确认删除?" @confirm="handleDelete(row)">
+                  <template #reference>
+                    <el-button
+                        class="reset-margin"
+                        link
+                        type="danger"
+                        :size="size"
+                      >
+                        删除
+                      </el-button>
+                  </template>
+                </el-popconfirm>
+          </template>
+        </pure-table>
       </template>
     </PureTableBar>
   </div>

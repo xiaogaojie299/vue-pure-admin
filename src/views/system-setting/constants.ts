@@ -211,7 +211,7 @@ export const generateMockData = () => {
       orgTypeId: "",
       status: 0,
       edit: 1,
-      queryScope: 0,
+      queryScope: "",
       remark: ""
     }
 };

@@ -83,12 +83,19 @@ export function setToken(data: DataInfo<Date>) {
       : {}
   );
 
-  function setUserKey({ avatar, username, nickname, roles, permissions }) {
+  function setUserKey({
+    avatar,
+    username,
+    nickname,
+    roles,
+    permissions,
+  }) {
     useUserStoreHook().SET_AVATAR(avatar);
     useUserStoreHook().SET_USERNAME(username);
     useUserStoreHook().SET_NICKNAME(nickname);
     useUserStoreHook().SET_ROLES(roles);
     useUserStoreHook().SET_PERMS(permissions);
+
     storageLocal().setItem(userKey, {
       refreshToken,
       expires,
@@ -99,7 +106,7 @@ export function setToken(data: DataInfo<Date>) {
       permissions
     });
   }
-
+  
   if (data.username && data.roles) {
     const { username, roles } = data;
     setUserKey({
@@ -107,7 +114,7 @@ export function setToken(data: DataInfo<Date>) {
       username,
       nickname: data?.nickname ?? "",
       roles,
-      permissions: data?.permissions ?? []
+      permissions: data?.permissions ?? [],
     });
   } else {
     const avatar =
@@ -125,7 +132,7 @@ export function setToken(data: DataInfo<Date>) {
       username,
       nickname,
       roles,
-      permissions
+      permissions,
     });
   }
 }

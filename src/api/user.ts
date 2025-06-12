@@ -88,6 +88,13 @@ export const sendVerifyCode = (data?: object) => {
   });
 };
 
+/** 获取用户身份 */
+export const getUserIdentity = (data?: object) => {
+  return http.request("post", baseUrlApi("/system/user/getUserIdentity"), {
+    data
+  });
+};
+
 /** 刷新`token` */
 export const refreshTokenApi = (data?: object) => {
   return http.request<RefreshTokenResult>("post", "/refresh-token", { data });
@@ -101,4 +108,34 @@ export const getMine = (data?: object) => {
 /** 账户设置-个人安全日志 */
 export const getMineLogs = (data?: object) => {
   return http.request<ResultTable>("get", "/mine-logs", { data });
+};
+
+export const addUser = (data?: object) => {
+  return http.request<ResultTable>("post", baseUrlApi(`system/user`), {
+    data
+  });
+};
+
+export const editUser = (data?: object) => {
+  return http.request<ResultTable>("put", baseUrlApi(`system/user`), {
+    data
+  });
+};
+
+export const getUserList = (data?: object) => {
+  return http.request<ResultTable>("get", baseUrlApi(`system/user/list`), {
+    data
+  });
+};
+
+export const getUserInfo = (data) => {
+  return http.request<ResultTable>("get", baseUrlApi(`system/user/getInfo`), {
+    data
+  });
+};
+
+export const getUserAuthRole = (data?: object) => {
+  return http.request<ResultTable>("get", baseUrlApi(`system/user/authRole`), {
+    data
+  });
 };

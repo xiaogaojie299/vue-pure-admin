@@ -141,7 +141,7 @@ export function useOrgTags(tableRef: Ref) {
             // 表单规则校验通过
             let apiFn = title === "新增" ? addOrgTag : setOrgTag;
 
-            await apiFn({ ...curData, id: row.id ?? undefined }).then(() => {
+            await apiFn({ ...curData, id: row?.id ?? undefined }).then(() => {
               if (title === "新增") {
                 pagination.currentPage = 1;
               }

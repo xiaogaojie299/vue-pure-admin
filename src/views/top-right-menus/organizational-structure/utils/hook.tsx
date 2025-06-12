@@ -10,6 +10,9 @@ import { usePublicHooks } from "../../hooks";
 import { addDialog } from "@/components/ReDialog";
 import type { PaginationProps } from "@pureadmin/table";
 import ReCropperPreview from "@/components/ReCropperPreview";
+import ReviewUserInfo from "../components/ReviewUserInfo.vue";
+
+
 import { cloneDeep } from "@pureadmin/utils";
 
 import type { FormItemProps, RoleFormItemProps } from "./types";
@@ -22,9 +25,12 @@ import {
 import {
   getRoleIds,
   getDeptList,
-  getUserList,
-  getAllRoleList
+  getRoleList
 } from "@/api/system";
+
+
+import { addUser, editUser, getUserList, getUserInfo } from "@/api/user";
+
 import {
   ElForm,
   ElInput,
@@ -42,12 +48,13 @@ import {
   reactive,
   onMounted
 } from "vue";
+import { use } from "echarts";
 
 export function useUser(tableRef: Ref, treeRef: Ref) {
   const form = reactive({
     // 左侧部门树的id
     deptId: "",
-    username: "",
+    userName: "",
     phone: "",
     status: ""
   });
@@ -71,19 +78,14 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
   });
   const columns: TableColumnList = [
     {
-      label: "勾选列", // 如果需要表格多选，此处label必须设置
-      type: "selection",
-      fixed: "left",
-      reserveSelection: true // 数据刷新后保留选项
-    },
-    {
-      label: "用户编号",
+      label: "排序",
       prop: "id",
-      width: 90
+      width: 90,
+      slot: "sort"
     },
     {
       label: "用户头像",
-      prop: "avatar",
+      prop: "avatarUrl",
       cellRenderer: ({ row }) => (
         <el-image
           fit="cover"
@@ -96,13 +98,13 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
       width: 90
     },
     {
-      label: "用户名称",
-      prop: "username",
+      label: "用户昵称",
+      prop: "nickName",
       minWidth: 130
     },
     {
-      label: "用户昵称",
-      prop: "nickname",
+      label: "真实姓名",
+      prop: "userName",
       minWidth: 130
     },
     {
@@ -112,23 +114,24 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
       cellRenderer: ({ row, props }) => (
         <el-tag
           size={props.size}
-          type={row.sex === 1 ? "danger" : null}
+          type={row.sex == "1" ? "danger" : null}
           effect="plain"
         >
-          {row.sex === 1 ? "女" : "男"}
+          {row.sex == "1" ? "女" : "男"}
         </el-tag>
       )
     },
     {
-      label: "部门",
-      prop: "dept.name",
-      minWidth: 90
+      label: "手机号码",
+      prop: "phonenumber",
+      minWidth: 160
     },
     {
-      label: "手机号码",
-      prop: "phone",
+      label: "创建时间",
       minWidth: 90,
-      formatter: ({ phone }) => hideTextAtIndex(phone, { start: 3, end: 6 })
+      prop: "createTime",
+      formatter: ({ createTime }) =>
+        dayjs(createTime).format("YYYY-MM-DD HH:mm:ss")
     },
     {
       label: "状态",
@@ -139,22 +142,15 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
           size={scope.props.size === "small" ? "small" : "default"}
           loading={switchLoadMap.value[scope.index]?.loading}
           v-model={scope.row.status}
-          active-value={1}
-          inactive-value={0}
+          active-value={"0"}
+          inactive-value={"1"}
           active-text="已启用"
           inactive-text="已停用"
           inline-prompt
+          disabled
           style={switchStyle.value}
-          onChange={() => onChange(scope as any)}
         />
       )
-    },
-    {
-      label: "创建时间",
-      minWidth: 90,
-      prop: "createTime",
-      formatter: ({ createTime }) =>
-        dayjs(createTime).format("YYYY-MM-DD HH:mm:ss")
     },
     {
       label: "操作",
@@ -192,7 +188,7 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
       `确认要<strong>${
         row.status === 0 ? "停用" : "启用"
       }</strong><strong style='color:var(--el-color-primary)'>${
-        row.username
+        row.userName
       }</strong>用户吗?`,
       "系统提示",
       {
@@ -204,28 +200,16 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
       }
     )
       .then(() => {
-        switchLoadMap.value[index] = Object.assign(
-          {},
-          switchLoadMap.value[index],
-          {
-            loading: true
-          }
-        );
-        setTimeout(() => {
-          switchLoadMap.value[index] = Object.assign(
-            {},
-            switchLoadMap.value[index],
-            {
-              loading: false
-            }
-          );
+        editUser({
+          userId: row.userId,
+          status: row.status === 0 ? 1 : 0
+        }).then(res => {
           message("已成功修改用户状态", {
             type: "success"
           });
-        }, 300);
+        });
       })
       .catch(() => {
-        row.status === 0 ? (row.status = 1) : (row.status = 0);
       });
   }
 
@@ -273,16 +257,14 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
   }
 
   async function onSearch() {
-    loading.value = true;
-    const { data } = await getUserList(toRaw(form));
-    dataList.value = data.list;
-    pagination.total = data.total;
-    pagination.pageSize = data.pageSize;
-    pagination.currentPage = data.currentPage;
-
-    setTimeout(() => {
-      loading.value = false;
-    }, 500);
+      loading.value = true;
+      const { rows, total } = await getUserList(
+        toRaw({ ...form, ...pagination, pageNum: pagination.currentPage })
+      ).finally(() => {
+        loading.value = false;
+      });
+      dataList.value = rows;
+      pagination.total = total;
   }
 
   const resetForm = formEl => {
@@ -295,6 +277,7 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
 
   function onTreeSelect({ id, selected }) {
     form.deptId = selected ? id : "";
+    console.log("id", id, selected);
     onSearch();
   }
 
@@ -312,6 +295,32 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
   }
 
   const cropRef = ref();
+
+  const handleChangeStatus = (row) => {
+    ElMessageBox.confirm(
+      `确认要<strong>${
+        row.status == 0 ? "停用" : "启用"
+      }吗?`,
+      "系统提示",
+      {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+        dangerouslyUseHTMLString: true,
+        draggable: true
+      }
+    ).then(resp => {
+      editUser({
+        userId: row.userId,
+        status: row.status == 0 ? 1 : 0
+      }).then(resp => {
+        onSearch();
+        message(`操作成功`, {
+          type: "success"
+        });
+      })
+    });
+  }
   /** 上传头像 */
   function handleUpload(row) {
     addDialog({
@@ -344,7 +353,7 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
   /** 重置密码 */
   function handleReset(row) {
     addDialog({
-      title: `重置 ${row.username} 用户的密码`,
+      title: `重置 ${row.userName} 用户的密码`,
       width: "30%",
       draggable: true,
       closeOnClickModal: false,
@@ -402,7 +411,7 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
         ruleFormRef.value.validate(valid => {
           if (valid) {
             // 表单规则校验通过
-            message(`已成功重置 ${row.username} 用户的密码`, {
+            message(`已成功重置 ${row.userName} 用户的密码`, {
               type: "success"
             });
             console.log(pwdForm.newPwd);
@@ -420,11 +429,11 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
     // 选中的角色列表
     const ids = (await getRoleIds({ userId: row.id })).data ?? [];
     addDialog({
-      title: `分配 ${row.username} 用户的角色`,
+      title: `分配 ${row.userName} 用户的角色`,
       props: {
         formInline: {
-          username: row?.username ?? "",
-          nickname: row?.nickname ?? "",
+          userName: row?.userName ?? "",
+          nickName: row?.nickName ?? "",
           roleOptions: roleOptions.value ?? [],
           ids
         }
@@ -444,6 +453,21 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
     });
   }
 
+  function handleReview (row) {
+    addDialog({
+      width: "60%",
+      draggable: true,
+      props: {
+        ...row
+      },
+      fullscreen: deviceDetection(),
+      fullscreenIcon: true,
+      closeOnClickModal: false,
+      hideFooter: true,
+      contentRenderer: () => <ReviewUserInfo row={row}></ReviewUserInfo>
+    });
+  }
+
   function openDialog(title = "新增", row?: FormItemProps) {
     addDialog({
       title: `${title}人员`,
@@ -451,15 +475,15 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
         formInline: {
           higherDeptOptions: formatHigherDeptOptions(higherDeptOptions.value),
           roleOptions: roleOptions.value ?? [],
-          parentId: row?.parentId ?? 0,
-          name: row?.name ?? "",
-          principal: row?.principal ?? "",
-          phone: row?.phone ?? "",
-          email: row?.email ?? "",
-          sort: row?.sort ?? 0,
-          status: row?.status ?? 1,
-          birthday: undefined, // 生日
-          zhiwei: "" // 职位
+          deptId: row?.deptId ?? 0,
+          nickName: row?.nickName ?? "",
+          userName: row?.userName ?? "",
+          phonenumber: row?.phonenumber ?? "",
+          status: row?.status ?? 0,
+          birthday: row?.birthday ?? "", // 生日
+          positionName: row?.positionName ?? "", // 职位
+          avatarUrl: row?.avatarUrl ?? "",
+          sex: row?.sex ?? '0',
         }
       },
       width: "60%",
@@ -472,23 +496,22 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
         const FormRef = formRef.value.getRef();
         const curData = options.props.formInline as FormItemProps;
         function chores() {
-          message(`您${title}了部门名称为${curData.name}的这条数据`, {
-            type: "success"
-          });
           done(); // 关闭弹框
           onSearch(); // 刷新表格数据
         }
-        FormRef.validate(valid => {
+        FormRef.validate(async valid => {
           if (valid) {
-            console.log("curData", curData);
             // 表单规则校验通过
-            if (title === "新增") {
-              // 实际开发先调用新增接口，再进行下面操作
-              chores();
-            } else {
-              // 实际开发先调用修改接口，再进行下面操作
-              chores();
-            }
+            let apiFn = row?.userId ? editUser : addUser;
+            let params = { ...curData };
+            await apiFn({ ...params, userId: row?.userId ?? undefined }).then(
+              () => {
+                if (title === "新增") {
+                  pagination.currentPage = 1;
+                }
+                chores();
+              }
+            );
           }
         });
       }
@@ -499,13 +522,27 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
     treeLoading.value = true;
     onSearch();
     // 归属部门
-    const { data } = await getDeptList();
+    let { data } = await getDeptList();
+    data = data?.map(v => {
+      return {
+        ...v,
+        name: v.deptName,
+        id: v.deptId
+      };
+    })
+
     higherDeptOptions.value = handleTree(data);
     treeData.value = handleTree(data);
+
+    console.log("treeData.value", treeData.value);
+
+    console.log("higherDeptOptions.value", higherDeptOptions.value);
+
     treeLoading.value = false;
 
     // 角色列表
-    roleOptions.value = (await getAllRoleList()).data;
+    roleOptions.value = (await getRoleList()).rows;
+    console.log("roleOptions.value", roleOptions.value);
   });
 
   return {
@@ -532,6 +569,8 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
     handleSizeChange,
     onSelectionCancel,
     handleCurrentChange,
-    handleSelectionChange
+    handleSelectionChange,
+    handleChangeStatus,
+    handleReview
   };
 }

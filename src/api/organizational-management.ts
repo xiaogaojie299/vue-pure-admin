@@ -27,6 +27,51 @@ export const getOrgPage = (data?: object) => {
   });
 };
 
+export const addOrg = (data?: object) => {
+  return http.request<ResultTable>("post", baseUrlApi("system/org/add"), {
+    data
+  });
+};
+
+export const editOrg = (data?: object) => {
+  return http.request<ResultTable>("post", baseUrlApi("system/org/edit"), {
+    data
+  });
+};
+
+export const deleteOrg = (data?: object) => {
+  return http.request<ResultTable>("post", baseUrlApi("system/org/delete"), {
+    data
+  });
+};
+
+export const getOrgEditLogs = (data?: object) => {
+  return http.request<ResultTable>(
+    "post",
+    baseUrlApi("system/org/org-log-page"),
+    {
+      data
+    }
+  );
+};
+
+export const getOrgDetail = (data?: object) => {
+  return http.request<ResultTable>(
+    "post",
+    baseUrlApi("system/org/detail"),
+    { data }
+  );
+};
+
+export const getScoreSetList = (data?: object) => {
+  return http.request<ResultTable>(
+    "post",
+    baseUrlApi("system/score-set/list"),
+    {
+      data
+    }
+  );
+};
 /** 获取组织列表-获取当前用户所属组织列表 */
 export const getAllOrg = (data?: object) => {
   return http.request<ResultTable>("post", baseUrlApi("system/org/get-all-org"), {

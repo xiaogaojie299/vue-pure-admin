@@ -108,7 +108,7 @@ const columns: PlusColumn[] = [
     valueType: "cascader",
     options: computed(() => treeData.value),
     fieldProps: {
-      placeholder: "请选择区域",
+      placeholder: "全部区域",
       props: {
         checkStrictly: true, // 允许选择任意一级
         emitPath: true, // 只返回当前选中的值
@@ -136,7 +136,9 @@ const columns: PlusColumn[] = [
     prop: "natureId",
     valueType: "select",
     options: computed(() => orgNatureList.value),
-    fieldProps: {},
+    fieldProps: {
+      placeholder: "全部",
+    },
     colProps: {
       span: 6
     }
@@ -146,7 +148,9 @@ const columns: PlusColumn[] = [
     prop: "orgIndustryId",
     valueType: "select",
     options: computed(() => orgIndustryList.value),
-
+    fieldProps: {
+      placeholder: "全部",
+    },
     colProps: {
       span: 6
     }
@@ -155,6 +159,9 @@ const columns: PlusColumn[] = [
     label: "组织分类",
     prop: "orgTypeId",
     valueType: "select",
+    fieldProps: {
+      placeholder: "全部",
+    },
     options: computed(() => orgTypeList.value),
     colProps: {
       span: 6

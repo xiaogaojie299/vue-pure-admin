@@ -1,13 +1,17 @@
 import dayjs from "dayjs";
 import { message } from "@/utils/message";
 import { getKeyList } from "@pureadmin/utils";
-import { getOrgPage } from "@/api/organizational-management";
+import { TOAST_TITLE_SUCCESS } from "@/constants";
+
+import {
+  getOrgPage,
+  deleteOrg
+} from "@/api/organizational-management";
 import type { PaginationProps } from "@pureadmin/table";
 import { type Ref, reactive, ref, onMounted, toRaw, computed, watch } from "vue";
-import router from "@/router";
+import { useRouter } from "vue-router";
 
 import { useTreeCascader } from "@/views/region-management/treeCascaderHook";
-import { v } from "node_modules/@faker-js/faker/dist/airline-BUL6NtOJ";
 
 const {  handleCascaderChange } = useTreeCascader();
 export function useOrganManagement(tableRef: Ref) {
@@ -18,6 +22,7 @@ export function useOrganManagement(tableRef: Ref) {
       orgIndustryId: "",
       orgTypeId: ""
   });
+  const router = useRouter();
   const dataList = ref([]);
   const loading = ref(true);
   const selectedNum = ref(0);
@@ -38,52 +43,54 @@ export function useOrganManagement(tableRef: Ref) {
     {
       label: "序号",
       prop: "id",
+      minWidth: 90,
+      formatter: (row, column, cellValue, index) => {
+        return index + 1;
+      },
+    },
+    {
+      label: "组织名称",
+      prop: "name",
+      minWidth: 100
+    },
+    {
+      label: "创新积分",
+      prop: "score",
       minWidth: 90
     },
     {
-      label: "用户名",
-      prop: "username",
-      minWidth: 100
+      label: "组织规模",
+      prop: "peopleNum",
+      minWidth: 120,
+      formatter: ({ peopleNum }) => {
+        return peopleNum + "人";
+      }
     },
     {
-      label: "登录 IP",
-      prop: "ip",
-      minWidth: 140
+      label: "组织性质",
+      prop: "natureId"
     },
     {
-      label: "登录地点",
-      prop: "address",
-      minWidth: 140
+      label: "注册基金",
+      prop: "natureId",
+      formatter: item => "-"
     },
     {
-      label: "操作系统",
-      prop: "system",
-      minWidth: 100
+      label: "所在园区",
+      prop: "parkIds"
     },
     {
-      label: "浏览器类型",
-      prop: "browser",
-      minWidth: 100
-    },
-    {
-      label: "登录状态",
-      prop: "status",
-      minWidth: 100,
-      cellRenderer: ({ row, props }) => (
-        <el-tag size={props.size}>{row.status === 1 ? "成功" : "失败"}</el-tag>
-      )
-    },
-    {
-      label: "登录行为",
-      prop: "behavior",
-      minWidth: 100
-    },
-    {
-      label: "登录时间",
-      prop: "loginTime",
+      label: "添加时间",
+      prop: "createTime",
       minWidth: 180,
-      formatter: ({ loginTime }) =>
-        dayjs(loginTime).format("YYYY-MM-DD HH:mm:ss")
+      formatter: ({ createTime }) =>
+        dayjs(createTime).format("YYYY-MM-DD HH:mm:ss")
+    },
+    {
+      label: "操作",
+      slot: "handle",
+      width: 250,
+      fixed: "right",
     }
   ];
 
@@ -113,13 +120,14 @@ export function useOrganManagement(tableRef: Ref) {
   }
 
   /** 批量删除 */
-  function onbatchDel() {
-    // 返回当前选中的行
+  async function onbatchDel() {
     const curSelected = tableRef.value.getTableRef().getSelectionRows();
-    // 接下来根据实际业务，通过选中行的某项数据，比如下面的id，调用接口进行批量删除
-    message(`已删除序号为 ${getKeyList(curSelected, "id")} 的数据`, {
-      type: "success"
-    });
+    await deleteOrg({
+      ids: getKeyList(curSelected, "id")
+    })
+
+    message(TOAST_TITLE_SUCCESS, { type: "success" });
+      
     tableRef.value.getTableRef().clearSelection();
     onSearch();
   }
@@ -137,7 +145,6 @@ export function useOrganManagement(tableRef: Ref) {
   async function onSearch() {
 
     let regionForm = handleCascaderChange(form.region);
-
     const { data } = await getOrgPage(
       toRaw({
         ...form,
@@ -146,7 +153,7 @@ export function useOrganManagement(tableRef: Ref) {
         pageNum: pagination.currentPage
       })
     );
-    dataList.value = data.list;
+    dataList.value = data.records;
     pagination.total = data.total;
     setTimeout(() => {
       loading.value = false;
@@ -159,13 +166,47 @@ export function useOrganManagement(tableRef: Ref) {
       onSearch();
   };
 
+  const handleDelete = async (row) => {
+        await deleteOrg([row.id]);
+        message(TOAST_TITLE_SUCCESS, { type: "success" });
+        onSearch();
+  }
+
   const handleGoAdd = () => {
     router.push({
-      path: "/organizational-structure/add"
+      name: "OrganizationalManagementAdd"
     });
   };
+
+  const handleGoEdit = (row) => {
+    router.push({
+      path: "/organizational-structure/add",
+      query: {
+        id: row.id
+      }
+    });
+  }
+
+  const handleGoDetails = (row) => {
+    router.push({
+      name: "OrganizationalManagementDetails",
+      query: {
+        id: row.id
+      }
+    });
+  }
+
+  const handleGoEditLog = (row) => {
+    router.push({
+      name: "OrganizationalManagementEditLog",
+      query: {
+        id: row.id
+      }
+    });
+  }
+  
   onMounted(() => {
-    onSearch();
+    // onSearch();
   });
 
   return {
@@ -184,5 +225,9 @@ export function useOrganManagement(tableRef: Ref) {
     handleCurrentChange,
     handleSelectionChange,
     handleGoAdd,
+    handleGoEdit,
+    handleDelete,
+    handleGoDetails,
+    handleGoEditLog
   };
 }

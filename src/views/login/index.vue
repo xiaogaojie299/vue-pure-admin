@@ -48,6 +48,9 @@ const ruleFormRef = ref<FormInstance>();
 const currentPage = computed(() => {
   return useUserStoreHook().currentPage;
 });
+const isAdmin = computed(() => {
+  return useUserStoreHook().orgId == 0;
+})
 
 const { t } = useI18n();
 const { initStorage } = useLayout();
@@ -57,12 +60,19 @@ dataThemeChange(overallStyle.value);
 const { title, getDropdownItemStyle, getDropdownItemClass } = useNav();
 const { locale, translationCh, translationEn } = useTranslationLang();
 
+import { getAllOrg } from "@/api/system";
+
 const ruleForm = reactive({
   username: "admin",
   password: "admin123"
 });
 
-const handleVisibleSelectOrganize = list => {
+
+const handleVisibleSelectOrganize = async () => {
+
+  let allOrg = await getAllOrg();
+  
+  console.log("allOrg", allOrg)
   const selectOrganizeRef = ref();
   addDialog({
     width: "60%",
@@ -122,7 +132,15 @@ const onLogin = async (formEl: FormInstance | undefined) => {
                     "https://fuss10.elemecdn.com/1/34/19aa98b1fcb2781c4fba33d850549jpeg.jpeg"
                 }
               ];
-              handleVisibleSelectOrganize(list);
+
+              // 如果是平台管理员账号登录，则不选择组织，如果是组织账号登录，需要选择组织的账号；
+              if (isAdmin.value)  {
+                router.push(getTopMenu(true).path).then(() => {
+                  message(t("login.pureLoginSuccess"), { type: "success" });
+                }).finally(() => (disabled.value = false))
+                return;
+              };
+              handleVisibleSelectOrganize();
             });
           } else {
             message(t("login.pureLoginFail"), { type: "error" });

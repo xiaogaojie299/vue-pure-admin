@@ -1,28 +1,29 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import { formUpload } from "@/api/mock";
 import ReCol from "@/components/ReCol";
 import ReCropperPreview from "@/components/ReCropperPreview";
 import uploadLine from "~icons/ri/upload-line";
+import {formUpload} from "@/api/common"
 
 import { formRules } from "../utils/rule";
 import { FormProps } from "../utils/types";
 import { usePublicHooks } from "../../hooks";
 import { createFormData, deviceDetection } from "@pureadmin/utils";
+import { ElMessage } from 'element-plus'
 
 const props = withDefaults(defineProps<FormProps>(), {
   formInline: () => ({
     ids: [], // 角色id
     birthday: undefined, // 生日
-    zhiwei: "", // 职位
+    positionName: "", // 职位
     avatar: "", // 头像
     title: "新增",
     higherDeptOptions: [],
-    parentId: 0,
-    nickname: "",
-    username: "",
+    deptId: 0,
+    nickName: "",
+    userName: "",
     password: "",
-    phone: "",
+    phonenumber: "",
     email: "",
     sex: "",
     status: 1,
@@ -37,11 +38,11 @@ const isShow = ref(false);
 
 const sexOptions = [
   {
-    value: 0,
+    value: "0",
     label: "男"
   },
   {
-    value: 1,
+    value: "1",
     label: "女"
   }
 ];
@@ -53,31 +54,28 @@ function getRef() {
   return ruleFormRef.value;
 }
 
-const onChange = uploadFile => {
-  const reader = new FileReader();
-  reader.onload = e => {
-    imgSrc.value = e.target.result as string;
-    isShow.value = true;
-  };
-  reader.readAsDataURL(uploadFile.raw);
-};
-
+const customUpload = async (options) => {
+  console.log("options", options)
+  try {
+   const { file } = options;
+    const formData = createFormData({
+        file: file,
+      });
+    // 调用你封装的 uploadFile 接口
+    const {data: response } = await formUpload(formData)
+    console.log('response', response)
+    // 假设接口返回的是 { url: 'https://xxx.jpg' }
+    if (response && response.url) {
+      // 手动设置响应内容
+      newFormInline.value.avatarUrl = response.url
+    } else {
+      ElMessage.error('上传失败，请重试')
+    }
+  } catch (err) {
+    ElMessage.error('上传失败，请检查网络或文件')
+  }
+}
 const handleSubmitImage = () => {
-  const formData = createFormData({
-    files: new File([cropperBlob.value], "avatar")
-  });
-  formUpload(formData)
-    .then(({ success, data }) => {
-      if (success) {
-        message("更新头像成功", { type: "success" });
-        handleClose();
-      } else {
-        message("更新头像失败");
-      }
-    })
-    .catch(error => {
-      message(`提交异常 ${error}`, { type: "error" });
-    });
 };
 
 const handleClose = () => {
@@ -102,18 +100,16 @@ defineExpose({ getRef });
   >
     <el-row :gutter="30">
       <re-col :value="8" :xs="24" :sm="24">
-        <el-form-item label="头像" prop="avatar">
+        <el-form-item label="头像" prop="avatarUrl">
           <div class="flex flex-col justify-between items-center">
-            <el-avatar :size="80" :src="formInline.avatar" />
-
+            <el-avatar :size="80" :src="newFormInline.avatarUrl" />
             <el-upload
               ref="uploadRef"
               accept="image/*"
               action="#"
               :limit="1"
-              :auto-upload="false"
               :show-file-list="false"
-              :on-change="onChange"
+              :http-request="customUpload"
             >
               <el-button plain class="mt-4!">
                 <IconifyIconOffline :icon="uploadLine" />
@@ -126,9 +122,9 @@ defineExpose({ getRef });
       <re-col :value="16" :xs="24" :sm="24">
         <el-row :gutter="30">
           <re-col :value="12" :xs="24" :sm="24">
-            <el-form-item label="姓名" prop="username">
+            <el-form-item label="姓名" prop="userName">
               <el-input
-                v-model="newFormInline.username"
+                v-model="newFormInline.userName"
                 clearable
                 placeholder="请输入"
               />
@@ -136,8 +132,8 @@ defineExpose({ getRef });
           </re-col>
 
           <re-col :value="12" :xs="24" :sm="24">
-            <el-form-item label="用户性别">
-              <el-select
+            <el-form-item label="用户性别" prop="sex">
+              <!-- <el-select
                 v-model="newFormInline.sex"
                 placeholder="请选择用户性别"
                 class="w-full"
@@ -149,19 +145,24 @@ defineExpose({ getRef });
                   :label="item.label"
                   :value="item.value"
                 />
-              </el-select>
+              </el-select> -->
+              
+              <el-radio-group v-model="newFormInline.sex">
+                <el-radio label="0">男</el-radio>
+                <el-radio label="1">女</el-radio>
+              </el-radio-group>
             </el-form-item>
           </re-col>
 
           <re-col :value="12" :xs="24" :sm="24">
-            <el-form-item label="归属部门">
+            <el-form-item label="归属部门" prop="depId">
               <el-cascader
-                v-model="newFormInline.parentId"
+                v-model="newFormInline.deptId"
                 class="w-full"
                 :options="newFormInline.higherDeptOptions"
                 :props="{
-                  value: 'id',
-                  label: 'name',
+                  value: 'deptId',
+                  label: 'deptName',
                   emitPath: false,
                   checkStrictly: true
                 }"
@@ -170,7 +171,7 @@ defineExpose({ getRef });
                 placeholder="请选择归属部门"
               >
                 <template #default="{ node, data }">
-                  <span>{{ data.name }}</span>
+                  <span>{{ data.deptName }}</span>
                   <span v-if="!node.isLeaf">
                     ({{ data.children.length }})
                   </span>
@@ -190,19 +191,19 @@ defineExpose({ getRef });
                 <el-option
                   v-for="(item, index) in newFormInline.roleOptions"
                   :key="index"
-                  :value="item.id"
-                  :label="item.name"
+                  :value="item.roleId"
+                  :label="item.roleName"
                 >
-                  {{ item.name }}
+                  {{ item.roleName }}
                 </el-option>
               </el-select>
             </el-form-item>
           </re-col>
 
           <re-col :value="12" :xs="24" :sm="24">
-            <el-form-item label="电话" prop="phone">
+            <el-form-item label="电话" prop="phonenumber">
               <el-input
-                v-model="newFormInline.phone"
+                v-model="newFormInline.phonenumber"
                 clearable
                 placeholder="请输入"
               />
@@ -222,21 +223,42 @@ defineExpose({ getRef });
           </re-col>
 
           <re-col :value="12" :xs="24" :sm="24">
-            <el-form-item label="职位" prop="zhiwei">
+            <el-form-item label="职位" prop="positionName">
               <el-input
-                v-model="newFormInline.zhiwei"
+                v-model="newFormInline.positionName"
                 clearable
                 placeholder="请输入"
               />
             </el-form-item>
           </re-col>
           <re-col :value="12" :xs="24" :sm="24">
-            <el-form-item label="昵称" prop="nickname">
+            <el-form-item label="昵称" prop="nickName">
               <el-input
-                v-model="newFormInline.nickname"
+                v-model="newFormInline.nickName"
                 clearable
                 placeholder="请输入"
               />
+            </el-form-item>
+          </re-col>
+
+          <re-col :value="12" :xs="24" :sm="24">
+            <el-form-item label="角色权限" prop="roleIds">
+              <el-select
+                v-model="newFormInline.roleIds"
+                placeholder="请选择"
+                class="w-full"
+                clearable
+                multiple
+              >
+                <el-option
+                  v-for="(item, index) in newFormInline.roleOptions"
+                  :key="index"
+                  :value="item.roleId"
+                  :label="item.roleName"
+                >
+                  {{ item.roleName }}
+                </el-option>
+              </el-select>
             </el-form-item>
           </re-col>
         </el-row>

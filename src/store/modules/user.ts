@@ -12,8 +12,11 @@ import {
   type RefreshTokenResult,
   getLogin,
   getLoginByCode,
-  refreshTokenApi
+  refreshTokenApi,
+  getUserIdentity
 } from "@/api/user";
+import { getAllOrg } from "@/api/system";
+
 import { useMultiTagsStoreHook } from "./multiTags";
 import { type DataInfo, setToken, removeToken, userKey } from "@/utils/auth";
 
@@ -37,9 +40,17 @@ export const useUserStore = defineStore("pure-user", {
     // 是否勾选了登录页的免登录
     isRemembered: false,
     // 登录页的免登录存储几天，默认7天
-    loginDay: 7
+    loginDay: 7,
+
+    //
+    orgId: storageLocal().getItem('ORG_ID') ?? ""
   }),
   actions: {
+    SET_ORGID(orgId) {
+      storageLocal().setItem("ORG_ID", orgId);
+      this.orgId = orgId;
+    },
+
     /** 存储头像 */
     SET_AVATAR(avatar: string) {
       this.avatar = avatar;
@@ -76,13 +87,23 @@ export const useUserStore = defineStore("pure-user", {
     SET_LOGINDAY(value: number) {
       this.loginDay = Number(value);
     },
+
+    loginCallback(data) { 
+    },
     /** 登入 */
     async loginByUsername(data) {
       return new Promise<UserResult>((resolve, reject) => {
         getLogin(data)
-          .then(data => {
-            console.log("data1", data);
-            if (data.code == 200) setToken(data.data);
+          .then(async data => {
+            if (data.code == 200) {
+              console.log(data.data);
+              setToken(data.data);
+              // 这里判断当前的角色是组织还是管理员  登录成功后 用户里面有个code字段=system 代表平台账号 组织id传 0
+              let responseData = await getUserIdentity();
+              if (responseData?.data === "system") {
+                this.SET_ORGID(0);
+              }
+            }
             resolve(data);
           })
           .catch(error => {

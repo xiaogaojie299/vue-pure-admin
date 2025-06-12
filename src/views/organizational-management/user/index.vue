@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import tree from "./tree.vue";
-import { useUser } from "./utils/hook";
+import { useUser } from "./hook";
 import { PureTableBar } from "@/components/RePureTableBar";
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
 
@@ -15,7 +14,7 @@ import Refresh from "~icons/ep/refresh";
 import AddFill from "~icons/ri/add-circle-line";
 
 defineOptions({
-  name: "SystemUser"
+  name: ""
 });
 
 const treeRef = ref();
@@ -33,44 +32,65 @@ const {
   pagination,
   buttonClass,
   deviceDetection,
+  currentValue,
+  optionsBasis,
   onSearch,
   resetForm,
-  onbatchDel,
-  openDialog,
   onTreeSelect,
   handleUpdate,
   handleDelete,
-  handleUpload,
-  handleReset,
-  handleRole,
   handleSizeChange,
-  onSelectionCancel,
   handleCurrentChange,
-  handleSelectionChange,
   handleChangeStatus,
-  handleReview
+  handleReview,
+  handleChangeAreaCasder
 } = useUser(tableRef, treeRef);
+
+
+
 </script>
 
 <template>
-  <div :class="['flex', 'justify-between', deviceDetection() && 'flex-wrap']">
-    <tree
-      ref="treeRef"
-      :class="['mr-2', deviceDetection() ? 'w-full' : 'min-w-[400px]']"
-      @tree-select="onTreeSelect"
-    />
-    <div
-      :class="[deviceDetection() ? ['w-full', 'mt-2'] : 'w-[calc(100%-400px)]']"
-    >
+  <div>
+    <div>
+
       <el-form
         ref="formRef"
         :inline="true"
         :model="form"
         class="search-form bg-bg_color w-full pl-8 pt-[12px] overflow-auto"
       >
-
         
-        <el-form-item label="用户名称：" prop="username">
+      <div class="custom-style mb-3">
+          <el-segmented v-model="currentValue" :options="optionsBasis" />
+        </div>
+
+        <el-form-item label="区域选择：" prop="region">
+          <el-cascader
+              v-model="form.region"
+              :options="treeData"
+              :props="{
+                multiple: false,
+                checkStrictly: true, // 允许选择任意一级
+                emitPath: true, // 只返回当前选中的值
+                label: 'name',
+                value: 'id'
+              }"
+              placeholder="全部区域"
+              filterable
+              class="w-[180px]!"
+              @change="handleChangeAreaCasder"
+            />
+        </el-form-item>
+        <el-form-item label="组织名称：" prop="username">
+          <el-input
+            v-model="form.username"
+            placeholder="请输入人员姓名"
+            clearable
+            class="w-[180px]!"
+          />
+        </el-form-item>
+        <el-form-item label="用户昵称：" prop="username">
           <el-input
             v-model="form.username"
             placeholder="请输入人员姓名"
@@ -106,19 +126,10 @@ const {
       </el-form>
 
       <PureTableBar
-        title="用户管理"
+        title="组织用户管理"
         :columns="columns"
         @refresh="onSearch"
       >
-        <template #buttons>
-          <el-button
-            type="primary"
-            :icon="useRenderIcon(AddFill)"
-            @click="openDialog()"
-          >
-            新增用户
-          </el-button>
-        </template>
         <template v-slot="{ size, dynamicColumns }">
           <div
             v-if="selectedNum > 0"
@@ -168,15 +179,6 @@ const {
             <div>{{ $index + 1 }}</div>
           </template>
             <template #operation="{ row }">
-              <el-button
-                class="reset-margin"
-                link
-                type="primary"
-                :size="size"
-                @click="openDialog('修改', row)"
-              >
-                编辑
-              </el-button>
               <el-button type="primary" :size="size" link  @click="handleChangeStatus(row)">{{ row.status == 0 ? '停用' : '启用' }}</el-button>
               <el-button type="primary" :size="size" link  @click="handleReview(row)">详情</el-button>
             </template>
