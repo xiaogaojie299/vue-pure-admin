@@ -8,6 +8,7 @@ import {
   region,
   systemSet
 } from "@/router/enums";
+import path from "path";
 
 /**
  * roles：页面级别权限，这里模拟二种 "admin"、"common"
@@ -144,7 +145,6 @@ const organizationalManagement = {
       },
       component: "organizational-management/index/details.vue"
     },
-
     {
       path: "/organizational-structure/edit-log",
       name: "OrganizationalManagementEditLog",
@@ -153,6 +153,15 @@ const organizationalManagement = {
         showLink: false
       },
       component: "organizational-management/index/edit-log.vue"
+    },
+    {
+      path: "/organizational-structure/log-details",
+      name: "OrganizationalManagementLogDetails",
+      meta: {
+        title: "日志详情",
+        showLink: false
+      },
+      component: "organizational-management/index/log-details.vue"
     },
     {
       path: "/organizational-structure/score",
@@ -218,6 +227,43 @@ const categoriesManagement = {
     }
   ]
 }; 
+
+const auditPendingManagement = {
+  path: "/audit-pending-management",
+  name: "AuditPendingManagement",
+  meta: {
+    title: "入驻管理",
+    rank: 9,
+    icon: "ep:coordinate"
+  },
+  children: [
+    {
+      path: "/audit-pending/management/user",
+      name: "AuditPendingManagementUser",
+      meta: {
+        title: "用户加入申请"
+      },
+      component: "audit-pending-management/user/index.vue"
+    },
+    {
+      path: "/audit-pending/management/org",
+      name: "AuditPendingManagementOrg",
+      meta: {
+        title: "添加组织申请"
+      },
+      component: "audit-pending-management/org/index.vue"
+    },
+    {
+      path: "/audit-pending/management/org-detail",
+      name: "AuditPendingManagementOrgDetail",
+      meta: {
+        title: "添加组织详情",
+        showLink: false,
+      },
+      component: "audit-pending-management/org/detail.vue"
+    }
+  ]
+};
 
 const regionManagement = {
   path: "/region-management",
@@ -337,6 +383,7 @@ export default defineFakeRoute([
           organizationalStructure,
           organizationalManagement,
           categoriesManagement,
+          auditPendingManagement,
           regionManagement,
           systemSetting
         ]

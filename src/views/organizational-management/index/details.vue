@@ -46,7 +46,7 @@ const initGroupData = () => {
 
 const initGetOrgDetail = async () => {
   let responseData = await getOrgDetail({ id: id.value });
-  let dataFileRequests = responseData.data;
+  let dataFileRequests = responseData.data?.dataFileRequests.filter(v => !!v.fieldName);
 
   dataFileRequests = dataFileRequests.map(v => {
     try {
@@ -60,10 +60,12 @@ const initGetOrgDetail = async () => {
       return v
     })
 
-  let list = [...responseData.data, ...groupList.value];
+    console.log("dataFileRequests", dataFileRequests);
+
+  let list = [...dataFileRequests, ...groupList.value];
 
   let treeData = handleTree(list, "id", "fieldParentId", "tableData");
-
+    console.log('treeData', treeData);
   groupList.value = treeData;
 }
 

@@ -43,18 +43,36 @@ import {
   reactive,
   onMounted
 } from "vue";
+import { start } from "nprogress";
 
 export function useUser(tableRef: Ref, treeRef: Ref) {
+  const SWITCH_OFF = "1";
+  const SWITCH_ON = "0";
 
-  const optionsBasis = ref(["全部", "正常", "停用"]);
+  const optionsBasis = ref([
+    {
+      label: "全部",
+      value: ""
+    },
+    {
+      label: "正常",
+      value: SWITCH_ON
+    },
+    {
+      label: "停用",
+      value: SWITCH_OFF
+    }
+  ]);
 
-  const currentValue = ref("全部");
+  const currentValue = ref("");
   
   const form = reactive({
     region: "",
-    userName: "",
-    phone: "",
-    status: ""
+    nickName: "", // 用户名称
+    phonenumber: "", // 手机号
+    status: "",
+    startTime: "",
+    endTime: "",
   });
   const dataList = ref([]);
   const loading = ref(true);
@@ -197,7 +215,7 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
   async function onSearch() {
       loading.value = true;
       const { rows, total } = await getUserList(
-        toRaw({ ...form, ...pagination, pageNum: pagination.currentPage })
+        toRaw({ ...form, ...pagination, pageNum: pagination.currentPage, type: 1 })
       ).finally(() => {
         loading.value = false;
       });

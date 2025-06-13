@@ -30,8 +30,13 @@ const groupList = ref([]);
 const router = useRouter();
 const route = useRoute();
 
-const id = computed(() => route.query.id || undefined);
+const id = computed(() => route.query.id || null);
 
+const loginAccountInfo = ref({
+  loginAccount: "",
+  loginPassword: "",
+  confirmPassword: "",
+});
 const getGroupChildField = (parentId) => {
   return new Promise(resolve => { 
     getGroupFiled({
@@ -78,13 +83,14 @@ const handleSave = async  () => {
   let fnApi = !id.value ? addOrg : editOrg
   fnApi({...organizationFormData, id: !id.value ? undefined: Number(id.value)}).then(resp => {
     message('添加成功', {type: 'success'});
+    onBack()
   })
-  onBack()
 }
 const onBack = () => {
   router.go(-1)
 }
 const initGroupData = () => {
+  return new Promise((resolve, reject) => {
   getOrgFieldGroup().then(async (res) => {
     // 这里把状态正常的显示出来
     // let list = res.data?.filter(v => {
@@ -99,7 +105,14 @@ const initGroupData = () => {
       }
     })
 
-    if (id?.value) return;
+    if (id?.value) {
+      return resolve(groupList.value);
+    } else {
+      reject();
+    } 
+
+
+    if (id?.value) return reject();
 
     for(let i = 0; i < groupList.value.length; i++) {
       let item = groupList.value[i];
@@ -116,22 +129,28 @@ const initGroupData = () => {
       item['tableData'] = list;
     }
   });
+  })
 }
 
 const initGetOrgDetail = async () => {
   let responseData = await getOrgDetail({ id: id.value });
-  console.log('responseData', responseData.data);
-  console.log('groupList', groupList.value);
-  let list = [...responseData.data, ...groupList.value];
-
+  let dataFileRequests = responseData?.data?.dataFileRequests.filter(v => !!v.fieldName);
+  let list = [...dataFileRequests, ...groupList.value];
   let treeData = handleTree(list, "id", "fieldParentId", "tableData");
-
+  loginAccountInfo.value = {
+    loginAccount: responseData?.data?.phone,
+    loginPassword: responseData?.data?.password,
+    confirmPassword: responseData?.data?.password,
+  }
   groupList.value = treeData;
 }
 
 const initData = async () => { 
-  initGroupData();
-  initGetOrgDetail();
+  initGroupData().then(() => {
+    initGetOrgDetail();
+  }).catch(() => {
+    console.error('initGroupData error');
+  });
 };
 onMounted(async () => {
   initData();
@@ -153,15 +172,26 @@ onMounted(async () => {
         </template>
         <template v-if="!index">
           <!-- <OrganizationForm :ref="(el) => setComponentRef(el, index)" :fields="item.tableData" ></OrganizationForm> -->
-           <OrganizationForm :ref="(el) => setComponentRef(el, index)"  :fields="item.tableData"  :isEdit="!!id"></OrganizationForm>
+           <template v-if="item.tableData?.length > 0">
+            <OrganizationForm :ref="(el) => setComponentRef(el, index)"  :fields="item.tableData"  :isEdit="!!id" :id="id" :loginAccountInfo="loginAccountInfo"></OrganizationForm>
+           </template>
+           <template v-else>
+            <el-empty description="暂无数据"></el-empty>
+           </template>
            
         </template>
         <template v-else>
-          <dynamic-form
-            v-model="item.formData"
-            :fields="item.tableData"
-            :ref="(el) => setComponentRef(el, index)"
-          />
+          <template v-if="item.tableData?.length > 0">
+            <dynamic-form
+              v-model="item.formData"
+              :fields="item.tableData"
+              :ref="(el) => setComponentRef(el, index)"
+              :id="id"
+            />
+           </template>
+          <template v-else>
+            <el-empty description="暂无数据"></el-empty>
+           </template>
         </template>
       </el-card>
     </div>

@@ -390,6 +390,7 @@
               placeholder="请输入"
               clearable
               class="w-[200]px!"
+              :disabled="isEdit"
             ></el-input>
           </el-form-item>
         </el-col>
@@ -400,6 +401,7 @@
               v-model="form.loginPassword"
               placeholder="请输入"
               clearable
+              :disabled="isEdit"
             ></el-input>
           </el-form-item>
         </el-col>
@@ -410,6 +412,7 @@
               v-model="form.confirmPassword"
               placeholder="请输入"
               clearable
+              :disabled="isEdit"
             ></el-input>
           </el-form-item>
         </el-col>
@@ -497,6 +500,13 @@ const props = defineProps({
   isEdit: {
     type: Boolean,
     default: false
+  },
+  id: {
+    default: null
+  },
+  loginAccountInfo: {
+    type: Object,
+    default: () => ({})
   }
 });
 
@@ -733,7 +743,6 @@ const transferJson = (data) => {
 
 const getInitForm = () => {
   let formData = props.fields;
-  
   const entries = Object.entries(form); // 转为 [ [key, value] ] 数组
   entries.forEach(([key, value], index) => {
     try {
@@ -757,9 +766,10 @@ const getFormData = () => {
     return {
       fieldName: item.name || item.fieldName,
       fieldParentId: item.parentId || item.fieldParentId,
-      id: item.id,
       fieldValue: "",
-      fieldJson: ""
+      fieldJson: "",
+      fieldId: item.fieldId,
+      id: item.id
     }
   })
   console.log('arr', arr)
@@ -901,6 +911,19 @@ watch(() => props.fields, (newVal) => {
   if (!props.isEdit) return 
   newField.value = newVal
   getInitForm()
+}, {
+  deep: true,
+  immediate: true
+})
+
+watch(() => props.loginAccountInfo, (newVal) => {
+
+  form.loginAccount = newVal.loginAccount;
+  form.loginPassword = newVal.loginPassword;
+  form.confirmPassword = newVal.confirmPassword;
+
+  console.log('账号密码监听成功', form);
+
 }, {
   deep: true,
   immediate: true

@@ -62,7 +62,21 @@ const {
       >
         
       <div class="custom-style mb-3">
-          <el-segmented v-model="currentValue" :options="optionsBasis" />
+          <el-segmented v-model="currentValue" :options="optionsBasis">
+            <template #default="scope">
+              <div
+                :class="[
+                  'flex',
+                  'items-center',
+                  'px-10',
+                  'py-2'
+                ]"
+              >
+                <div>{{ scope.item.label }}</div>
+              </div>
+            </template>
+          </el-segmented>
+          
         </div>
 
         <el-form-item label="区域选择：" prop="region">
@@ -82,23 +96,47 @@ const {
               @change="handleChangeAreaCasder"
             />
         </el-form-item>
-        <el-form-item label="组织名称：" prop="username">
+        <el-form-item label="组织名称：" prop="searchValue">
           <el-input
-            v-model="form.username"
-            placeholder="请输入人员姓名"
+            v-model="form.searchValue"
+            placeholder="组织名称"
             clearable
             class="w-[180px]!"
           />
         </el-form-item>
-        <el-form-item label="用户昵称：" prop="username">
+        <el-form-item label="用户昵称：" prop="nickName">
           <el-input
-            v-model="form.username"
-            placeholder="请输入人员姓名"
+            v-model="form.nickName"
+            placeholder="用户昵称"
             clearable
             class="w-[180px]!"
           />
         </el-form-item>
-        <el-form-item label="状态：" prop="status">
+        <el-form-item label="注册时间：" prop="orgType">
+          <el-form-item label="" label-width="0" prop="startTime">
+            <el-date-picker
+            v-model="form.startTime"
+            type="date-time"
+            placeholder="开始时间"
+            class="w-[160px]!"
+            value-format="YYYY-MM-DD HH:mm:ss"
+            clearable
+            
+          />
+        </el-form-item>
+          <el-form-item label="" label-width="0" prop="endTime">
+            <el-date-picker
+            v-model="form.endTime"
+            type="date-time"
+            placeholder="开始时间"
+            class="w-[160px]!"
+            value-format="YYYY-MM-DD HH:mm:ss"
+            clearable
+            
+          />
+        </el-form-item>
+        </el-form-item>
+        <!-- <el-form-item label="状态：" prop="status">
           <el-select
             v-model="form.status"
             placeholder="全部"
@@ -109,7 +147,7 @@ const {
             <el-option label="正常" value="0" />
             <el-option label="停用" value="1" />
           </el-select>
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item>
           <el-button
             type="primary"

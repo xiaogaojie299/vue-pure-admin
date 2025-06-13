@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { type Ref, reactive, ref, onMounted, toRaw, h } from "vue";
+import { type Ref, reactive, ref, onMounted, toRaw, h, defineOptions, computed } from "vue";
 import { PureTableBar } from "@/components/RePureTableBar";
 import type { PaginationProps } from "@pureadmin/table";
+import { useRouter, useRoute } from "vue-router";
 
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
 
@@ -11,8 +12,15 @@ import Plane from "~icons/ri/plane-line";
 import AddFill from "~icons/ri/add-circle-line";
 import Refresh from "~icons/ep/refresh";
 
+const route = useRoute();
+const router = useRouter();
+
 defineOptions({
   name: "OrganizationalManagementEditLog"
+});
+
+const id = computed(() => {
+  return route.query.id;
 });
 
 const filterParams = reactive({
@@ -40,7 +48,13 @@ const columns: TableColumnList = [
   },
   {
     label: "操作人名称",
-    prop: "name",
+    prop: "opUser",
+    minWidth: 100
+  },
+
+  {
+    label: "操作人时间",
+    prop: "createTime",
     minWidth: 100
   },
   {
@@ -53,7 +67,7 @@ const columns: TableColumnList = [
 
 async function onSearch() {
     loading.value = true;
-    const { data } = await getOrgEditLogs(toRaw({ ...filterParams, ...pagination, pageNum: pagination.currentPage })).finally(() => {
+    const { data } = await getOrgEditLogs(toRaw({ ...filterParams, ...pagination, pageNum: pagination.currentPage, orgId: id.value })).finally(() => {
       loading.value = false;
     });
     dataList.value = data.records;
@@ -154,6 +168,7 @@ onMounted(() => {
 
           <template #operation="{ row }">
             <el-button type="primary" link 
+            @click="router.push({ path: '/organizational-structure/log-details', query: { id: row.id } })"
               >查看</el-button
             >
           </template>

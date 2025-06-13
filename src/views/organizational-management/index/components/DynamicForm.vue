@@ -86,6 +86,9 @@ const props = defineProps({
   rules: {
     type: Object,
     default: () => ({})
+  },
+  id: {
+    default: null
   }
 });
 
@@ -118,7 +121,8 @@ const getFormData = () => {
       fieldName: item.name,
       fieldParentId: item.parentId,
       fieldValue: item.value,
-      fieldId: item.id,
+      fieldId: item.fieldId,
+      id: item.id
     };
   });
   return list;

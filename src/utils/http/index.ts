@@ -18,7 +18,7 @@ import { message } from "../message";
 // 相关配置请参考：www.axios-js.com/zh-cn/docs/#axios-request-config-1
 const defaultConfig: AxiosRequestConfig = {
   // 请求超时时间
-  timeout: 10000,
+  timeout: 20000,
   headers: {
     Accept: "application/json, text/plain, */*",
     "Content-Type": "application/json",
@@ -88,15 +88,15 @@ class PureHttp {
                 if (config.method == "get") {
                   // GET 请求加到 params 中
                   config.params = {
+                    orgId,
                     ...config.data,
                     ...config.params,
-                    orgId
                   };
                 } else if (["post", "put"].includes(config.method)) {
                   // POST 请求加到 data 中
                   config.data = {
+                    orgId,
                     ...config.data,
-                    orgId
                   };
                 }
               }
@@ -163,10 +163,10 @@ class PureHttp {
         if ($data.code == 200) {
           $data.success = true;
         }
-          if (!$data.success) {
-            message($data.msg, { type: "error" });
-            return Promise.reject($data.msg);
-          }
+        if (!$data.success) {
+          message($data.msg, { type: "error" });
+          return Promise.reject($data.msg);
+        }
 
           return response.data;
       },

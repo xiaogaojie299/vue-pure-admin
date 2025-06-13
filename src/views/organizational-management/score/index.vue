@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
 import { ElTable, ElTableColumn } from "element-plus";
-import { getScoreSetList } from "@/api/organizational-management";
+import { getScoreSetList, editScoreSet } from "@/api/organizational-management";
+import { message } from "@/utils/message";
 
 interface ScoreSet {
   id: number;
@@ -19,7 +20,14 @@ interface ScoreSet {
 const scoreSetList = ref<ScoreSet[]>([]);
 const loading = ref<boolean>(true);
 
-const titleMap = ["技术创新指标", "成长经营指标", "辅助指标", "加分指标", "负面指标", ""]
+const titleMap = [
+  "技术创新指标",
+  "成长经营指标",
+  "辅助指标",
+  "加分指标",
+  "负面指标",
+  ""
+];
 
 onMounted(() => {
   getScoreSetList().then(response => {
@@ -59,6 +67,12 @@ const objectSpanMethod = ({ row, column, rowIndex, columnIndex }: any) => {
     }
   }
 };
+
+const updateScoreSet = (row: any ) => {
+  editScoreSet(row).then((res) => {
+      message('添加成功', {type: 'success'});
+  });
+};
 </script>
 
 <template>
@@ -67,57 +81,70 @@ const objectSpanMethod = ({ row, column, rowIndex, columnIndex }: any) => {
       <el-card shadow="hover">
         <template #header>
           <h3>
-            {{
-              titleMap[index]
-            }}
+            {{ titleMap[index] }}
           </h3>
         </template>
-          <div>
-            <el-table
-              :data="groupedData[type]"
-              border
-              style="width: 100%"
-              :span-method="objectSpanMethod"
-            >
-              <el-table-column
-                type="index"
-                label="序号"
-                width="100"
-              ></el-table-column>
-              <el-table-column
-                prop="name"
-                label="评分项"
-                width="400"
-              ></el-table-column>
-              <el-table-column label="二级权重指标" width="480">
-                <el-table-column
-                  prop="beginValue"
-                  label="初创期"
-                  width=""
-                ></el-table-column>
-                <el-table-column
-                  prop="growValue"
-                  label="成长期"
-                  width=""
-                ></el-table-column>
-                <el-table-column
-                  prop="staValue"
-                  label="稳定期"
-                  width=""
-                ></el-table-column>
+        <div>
+          <el-table
+            :data="groupedData[type]"
+            border
+            style="width: 100%"
+            :span-method="objectSpanMethod"
+          >
+            <el-table-column
+              type="index"
+              label="序号"
+              width="100"
+            ></el-table-column>
+            <el-table-column
+              prop="name"
+              label="评分项"
+              width="400"
+            ></el-table-column>
+            <el-table-column label="二级权重指标" width="450">
+              <el-table-column prop="beginValue" label="初创期" width="">
+                <template #default="{ row }">
+                  <el-input-number
+                    v-model="row.beginValue"
+                    controls-position="right"
+                    :step="1"
+                    @change="value => updateScoreSet(row)"
+                  ></el-input-number>
+                </template>
               </el-table-column>
-              <el-table-column
-                prop="referValue"
-                label="满分值参考"
-                width="120"
-              ></el-table-column>
-            </el-table>
-          </div>
+              <el-table-column prop="growValue" label="成长期" width="">
+                <template #default="{ row }">
+                  <el-input-number
+                    v-model="row.growValue"
+                    controls-position="right"
+                    :step="1"
+                  ></el-input-number>
+                </template>
+              </el-table-column>
+              <el-table-column prop="staValue" label="稳定期" width="">
+                <template #default="{ row }">
+                  <el-input-number
+                    v-model="row.staValue"
+                    controls-position="right"
+                    :step="1"
+                  ></el-input-number>
+                </template>
+              </el-table-column>
+            </el-table-column>
+            <el-table-column prop="referValue" label="满分值参考" width="160">
+              <template #default="{ row }">
+                <el-input-number
+                  v-model="row.referValue"
+                  controls-position="right"
+                  :step="1"
+                ></el-input-number>
+              </template>
+            </el-table-column>
+          </el-table>
+        </div>
       </el-card>
     </div>
   </div>
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>

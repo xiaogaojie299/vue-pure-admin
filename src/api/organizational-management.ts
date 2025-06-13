@@ -63,10 +63,30 @@ export const getOrgDetail = (data?: object) => {
   );
 };
 
+// org-log-detail
+export const getOrgLogDetail = (data?: object) => {
+  return http.request<ResultTable>(
+    "post",
+    baseUrlApi("system/org/org-log-detail"),
+    {
+      data
+    }
+  );
+};
+
 export const getScoreSetList = (data?: object) => {
   return http.request<ResultTable>(
     "post",
     baseUrlApi("system/score-set/list"),
+    {
+      data
+    }
+  );
+};
+export const editScoreSet = (data?: object) => {
+  return http.request<ResultTable>(
+    "post",
+    baseUrlApi("system/score-set/edit"),
     {
       data
     }
