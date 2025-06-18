@@ -155,7 +155,7 @@ defineExpose({ getRef });
           </re-col>
 
           <re-col :value="12" :xs="24" :sm="24">
-            <el-form-item label="归属部门" prop="depId">
+            <el-form-item label="归属部门" prop="deptId">
               <el-cascader
                 v-model="newFormInline.deptId"
                 class="w-full"

@@ -14,7 +14,7 @@ import Refresh from "~icons/ep/refresh";
 import AddFill from "~icons/ri/add-circle-line";
 
 defineOptions({
-  name: ""
+  name: "SystemUserTourist"
 });
 
 const treeRef = ref();
@@ -45,61 +45,39 @@ const {
   handleReview,
   handleChangeAreaCasder
 } = useUser(tableRef, treeRef);
-
-
-
 </script>
 
 <template>
   <div>
     <div>
-
       <el-form
         ref="formRef"
         :inline="true"
         :model="form"
         class="search-form bg-bg_color w-full pl-8 pt-[12px] overflow-auto"
       >
-        
-      <div class="custom-style mb-3">
-          <el-segmented v-model="currentValue" :options="optionsBasis">
+        <div class="custom-style mb-3">
+          <el-segmented
+            v-model="currentValue"
+            :options="optionsBasis"
+            @change="
+              () => {
+                pagination.currentPage = 1;
+                onSearch();
+              }
+            "
+          >
             <template #default="scope">
-              <div
-                :class="[
-                  'flex',
-                  'items-center',
-                  'px-10',
-                  'py-2'
-                ]"
-              >
+              <div :class="['flex', 'items-center', 'px-10', 'py-2']">
                 <div>{{ scope.item.label }}</div>
               </div>
             </template>
           </el-segmented>
-          
         </div>
-
-        <el-form-item label="区域选择：" prop="region">
-          <el-cascader
-              v-model="form.region"
-              :options="treeData"
-              :props="{
-                multiple: false,
-                checkStrictly: true, // 允许选择任意一级
-                emitPath: true, // 只返回当前选中的值
-                label: 'name',
-                value: 'id'
-              }"
-              placeholder="全部区域"
-              filterable
-              class="w-[180px]!"
-              @change="handleChangeAreaCasder"
-            />
-        </el-form-item>
-        <el-form-item label="组织名称：" prop="searchValue">
+        <el-form-item label="手机电话：" prop="mobile">
           <el-input
-            v-model="form.searchValue"
-            placeholder="组织名称"
+            v-model="form.mobile"
+            placeholder="请输入"
             clearable
             class="w-[180px]!"
           />
@@ -112,42 +90,28 @@ const {
             class="w-[180px]!"
           />
         </el-form-item>
-        <el-form-item label="注册时间：" prop="orgType">
-          <el-form-item label="" label-width="0" prop="startTime">
-            <el-date-picker
-            v-model="form.startTime"
-            type="datetime"
-            placeholder="开始时间"
-            class="w-[160px]!"
-            value-format="YYYY-MM-DD HH:mm:ss"
-            clearable
-            
-          />
-        </el-form-item>
-          <el-form-item label="" label-width="0" prop="endTime">
-            <el-date-picker
-            v-model="form.endTime"
-            type="datetime"
-            placeholder="开始时间"
-            class="w-[160px]!"
-            value-format="YYYY-MM-DD HH:mm:ss"
-            clearable
-            
-          />
-        </el-form-item>
-        </el-form-item>
-        <!-- <el-form-item label="状态：" prop="status">
-          <el-select
-            v-model="form.status"
-            placeholder="全部"
-            clearable
-            class="w-[180px]!"
-          >
-            <el-option label="全部" :value="''" />
-            <el-option label="正常" value="0" />
-            <el-option label="停用" value="1" />
-          </el-select>
-        </el-form-item> -->
+            <el-form-item label="注册时间："  prop="startTime">
+              <el-date-picker
+                v-model="form.startTime"
+                type="datetime"
+                placeholder="开始时间"
+                class="w-[160px]!"
+                value-format="YYYY-MM-DD HH:mm:ss"
+                clearable
+              />
+            </el-form-item>
+
+            <el-form-item label="" label-width="0" prop="endTime">
+              <el-date-picker
+                v-model="form.endTime"
+                type="datetime"
+                placeholder="结束时间"
+                class="w-[160px]!"
+                value-format="YYYY-MM-DD HH:mm:ss"
+                clearable
+              />
+          </el-form-item>
+
         <el-form-item>
           <el-button
             type="primary"
@@ -163,11 +127,7 @@ const {
         </el-form-item>
       </el-form>
 
-      <PureTableBar
-        title="组织用户管理"
-        :columns="columns"
-        @refresh="onSearch"
-      >
+      <PureTableBar title="组织用户管理" :columns="columns" @refresh="onSearch">
         <template v-slot="{ size, dynamicColumns }">
           <div
             v-if="selectedNum > 0"
@@ -213,12 +173,24 @@ const {
             @page-size-change="handleSizeChange"
             @page-current-change="handleCurrentChange"
           >
-          <template #sort="{ $index }">
-            <div>{{ $index + 1 }}</div>
-          </template>
+            <template #sort="{ $index }">
+              <div>{{ $index + 1 }}</div>
+            </template>
             <template #operation="{ row }">
-              <el-button type="primary" :size="size" link  @click="handleChangeStatus(row)">{{ row.status == 0 ? '停用' : '启用' }}</el-button>
-              <el-button type="primary" :size="size" link  @click="handleReview(row)">详情</el-button>
+              <el-button
+                type="primary"
+                :size="size"
+                link
+                @click="handleChangeStatus(row)"
+                >{{ row.status == 0 ? "停用" : "启用" }}</el-button
+              >
+              <el-button
+                type="primary"
+                :size="size"
+                link
+                @click="handleReview(row)"
+                >详情</el-button
+              >
             </template>
           </pure-table>
         </template>

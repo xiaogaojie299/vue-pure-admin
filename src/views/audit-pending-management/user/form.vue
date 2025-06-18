@@ -2,10 +2,10 @@
   <div class="audit-form">
     <div class="info-section flex justify-center">
       <div>
-        <p>申请组织：成都科技有限公司</p>
-        <p>手机号码：13588888888</p>
-        <p>真实姓名：张三</p>
-        <p>申请职位：经理</p>
+        <p>申请组织：{{ formData.parkName }}</p>
+        <p>手机号码：{{ formData.mobile }}</p>
+        <p>真实姓名：{{ formData.name }}</p>
+        <p>申请职位：{{ formData.positionName }}</p>
       </div>
     </div>
     <el-divider></el-divider>

@@ -18,11 +18,13 @@ const loginRules = reactive<FormRules>({
       validator: (rule, value, callback) => {
         if (value === "") {
           callback(new Error(transformI18n($t("login.purePassWordReg"))));
-        } else if (!REGEXP_PWD.test(value)) {
-          callback(new Error(transformI18n($t("login.purePassWordRuleReg"))));
-        } else {
+        }
+        else {
           callback();
         }
+        // if (!REGEXP_PWD.test(value)) {
+        //   callback(new Error(transformI18n($t("login.purePassWordRuleReg"))));
+        // }
       },
       trigger: "blur"
     }

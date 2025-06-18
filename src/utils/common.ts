@@ -19,28 +19,33 @@ export function getFieldValueById<T extends { id: number }>(
 }
 
 // [ [1, ,2, 3], [4, 5, 6] ] 转换为 "1&2&3,4&5&6"
-export function convertArrayToString(arr: (number | undefined)[][], key='&'): string {
+export function convertArrayToString(
+  arr: (number | undefined)[][],
+  key = "&"
+): string {
   return arr
-    .map(subArr => 
-      subArr
-        .filter(item => item !== undefined && item !== null) // 过滤掉 undefined 和 null
-        .join(key) // 子数组用 & 拼接
+    .map(
+      subArr =>
+        subArr
+          .filter(item => item !== undefined && item !== null) // 过滤掉 undefined 和 null
+          .join(key) // 子数组用 & 拼接
     )
-    .join(','); // 用 , 拼接每个子数组的结果
+    .join(","); // 用 , 拼接每个子数组的结果
 }
 
-
 // "1&2&3,4&5&6" 转换为 [ [1, ,2, 3], [4, 5, 6] ]
-export function convertStringToArray(str: string, key='&'): number[][] {
-  return str.split(',').map((group) => {
+export function convertStringToArray(str: string, key = "&"): number[][] {
+  return str.split(",").map(group => {
     return group.split(key).map(Number);
   });
 }
 
-
 // "1&2&3,4&5&6" 转换为 [ ['1', '2', '3'], ['4', '5', '6'] ]
-export function convertStringToArrayOrItemStr(str: string, key='&'): string[][] {
-  return str?.split(',')?.map((group) => {
+export function convertStringToArrayOrItemStr(
+  str: string,
+  key = "&"
+): string[][] {
+  return str?.split(",")?.map(group => {
     return group?.split(key)?.map(String);
   });
 }
@@ -84,34 +89,34 @@ export function uniqueByKey<T>(array: T[], key: keyof T): T[] {
 }
 
 /**
-     * 获取选中节点的 label 路径
-     * @param data 树形数据源
-     * @param selectedIds 选中的 id 列表
-     * @returns string[]
-     */
-    export function getSelectedLabels(data, selectedIds) {
-      const result = [];
-      function findLabelById(data, id) {
-        for (const node of data) {
-          if (node.id === id) {
-            return node.name;
-          }
-          if (node.children) {
-            const found = findLabelById(node.children, id);
-            if (found) return found;
-          }
-        }
-        return null;
+ * 获取选中节点的 label 路径
+ * @param data 树形数据源
+ * @param selectedIds 选中的 id 列表
+ * @returns string[]
+ */
+export function getSelectedLabels(data, selectedIds) {
+  const result = [];
+  function findLabelById(data, id) {
+    for (const node of data) {
+      if (node.id === id) {
+        return node.name;
       }
-  
-      for (const id of selectedIds) {
-        const label = findLabelById(data, id);
-        if (label) result.push(label);
+      if (node.children) {
+        const found = findLabelById(node.children, id);
+        if (found) return found;
       }
-  
-      return result;
     }
-  
+    return null;
+  }
+
+  for (const id of selectedIds) {
+    const label = findLabelById(data, id);
+    if (label) result.push(label);
+  }
+
+  return result;
+}
+
 /**
  * 深度拍平任意嵌套数组，并过滤空值
  * @param arr - 可能嵌套的数组
@@ -126,4 +131,44 @@ export function deepFlattenAndFilter<T>(arr: any[]): T[] {
     }
     return acc;
   }, [] as T[]);
+}
+
+interface TreeNode {
+  id: number;
+  title: string;
+  [key: string]: any; // 支持其他字段
+}
+
+/**
+ * 将树形结构中的每个节点的 children 字段与其他字段分离
+ * @param tree 树形结构数组
+ * @returns 包含两个部分：
+ */
+export function splitTreeChildren(tree: TreeNode[]) {
+  const nodes: Omit<TreeNode, "children">[] = [];
+  const childrenMap: Record<number, TreeNode[]> = {};
+
+  function traverse(data: TreeNode[], parentId: number | null = null) {
+    return data.map(node => {
+      const { children, ...rest } = node;
+
+      // 添加到主节点列表（不含 children）
+      nodes.push(rest);
+
+      // 如果有 children，保存映射关系
+      if (children && children.length > 0) {
+        childrenMap[rest.id] = children;
+        traverse(children, rest.id);
+      }
+
+      return rest;
+    });
+  }
+
+  traverse(tree);
+
+  return {
+    nodes,
+    childrenMap
+  };
 }

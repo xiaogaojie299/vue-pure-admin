@@ -1,6 +1,7 @@
 import dayjs from "dayjs";
 import editForm from "../form.vue";
 import { handleTree } from "@/utils/tree";
+import { splitTreeChildren } from "@/utils/common"
 import { message } from "@/utils/message";
 import { ElMessageBox } from "element-plus";
 import { usePublicHooks } from "../../hooks";
@@ -16,6 +17,7 @@ import {
   getRoleMenu,
   addRole,
   editRole,
+  getRoleMenuTreeselect,
   deleteRole
 } from "@/api/system";
 import { type Ref, reactive, ref, onMounted, h, toRaw, watch } from "vue";
@@ -40,8 +42,8 @@ export function useRole(treeRef: Ref) {
   const isSelectAll = ref(false);
   const { switchStyle } = usePublicHooks();
   const treeProps = {
-    value: "roleId",
-    label: "title",
+    value: "id",
+    label: "label",
     children: "children"
   };
   const pagination = reactive<PaginationProps>({
@@ -215,16 +217,17 @@ export function useRole(treeRef: Ref) {
             // 表单规则校验通过
             let apiFn = title === "新增" ? addRole : editRole;
             let params = { ...curData };
-            params["regionName"] = formRef.value.getRegionName();
-
-            await apiFn({ ...params, roleId: row.roleId ?? undefined }).then(
-              () => {
-                if (title === "新增") {
-                  pagination.currentPage = 1;
-                }
-                chores();
+            await apiFn({
+              roleSort: 1,
+              status: "0",
+              ...params,
+              roleId: row?.roleId ?? undefined
+            }).then(() => {
+              if (title === "新增") {
+                pagination.currentPage = 1;
               }
-            );
+              chores();
+            });
           }
         });
       }
@@ -239,9 +242,14 @@ export function useRole(treeRef: Ref) {
     if (roleId) {
       curRow.value = row;
       isShow.value = true;
-      // const { data } = await getRoleMenuIds({roleId});
-      const { data } = await getRoleMenu({ roleId });
-      treeRef.value.setCheckedKeys(data);
+
+      const responseData = await getRoleMenuTreeselect({ roleId });
+      treeData.value = responseData?.menus;
+      
+      let {nodes} = splitTreeChildren(treeData.value, "children");
+
+      treeIds.value = getKeyList(nodes, 'id');
+      treeRef.value.setCheckedKeys(responseData?.checkedKeys || [2001]);
     } else {
       curRow.value = null;
       isShow.value = false;
@@ -261,8 +269,14 @@ export function useRole(treeRef: Ref) {
     const { roleId, roleName } = curRow.value;
     // 根据用户 roleId 调用实际项目中菜单权限修改接口
     console.log(roleId, treeRef.value.getCheckedKeys());
-    message(`角色名称为${roleName}的菜单权限修改成功`, {
-      type: "success"
+    let menuIds = treeRef.value.getCheckedKeys();
+    let params = { ...curRow.value };
+    delete params.orgId;
+    editRole({ ...params, menuIds: menuIds }).then(resp => {
+      message(`操作成功`, {
+        type: "success"
+      });
+      onSearch();
     });
   }
 
@@ -279,11 +293,9 @@ export function useRole(treeRef: Ref) {
 
   onMounted(async () => {
     onSearch();
+
     // const { data } = await getRoleMenu();
     // treeIds.value = getKeyList(data, "id");
-    // treeData.value = handleTree(data);
-    // treeData.value = data;
-
   });
 
   watch(isExpandAll, val => {
@@ -304,6 +316,7 @@ export function useRole(treeRef: Ref) {
     curRow,
     loading,
     columns,
+  treeIds,
     rowStyle,
     dataList,
     treeData,

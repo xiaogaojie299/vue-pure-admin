@@ -13,6 +13,7 @@ import {
 import { useOrganManagement } from "../hook";
 import { useTree } from "@/views/region-management/treeHook";
 import { useTreeCascader } from "@/views/region-management/treeCascaderHook";
+import { getPark } from "@/api/region-management";
 
 const { treeData, loadTreeData } = useTree();
 const { form, onSearch } = useOrganManagement();
@@ -41,6 +42,10 @@ const orgIndustryList = ref([allTemplate.value]);
 
 // 组织类型
 const orgTypeList = ref([allTemplate.value]);
+
+// 园区
+const parkOptions = ref<any[]>([]);
+
 
 const getOrgNatureList = async () => {
   let { data } = await getOrgNature({ pageSize: 1000, pageNum: 1 });
@@ -84,6 +89,23 @@ const getOrgTypeList = async () => {
   });
   orgTypeList.value = [...orgTypeList.value, ...newList];
 };
+
+
+const getParkOptions = () => {
+  getPark({
+    pageNum: 1,
+    pageSize: 1000
+  }).then(res => {
+    let list= res.data.records;
+    parkOptions.value = list.map(v => {
+      return {
+        ...v,
+        value: v.id,
+        label: v.name
+      };
+    });
+  });
+};
 const initData = async () => {
   // 获取组织信息
   getOrgNatureList();
@@ -91,6 +113,8 @@ const initData = async () => {
   getOrgIndustryList();
   // 组织分类
   getOrgTypeList();
+  // 组织园区
+  getParkOptions();
 };
 
 onMounted(() => {
@@ -120,7 +144,23 @@ const columns: PlusColumn[] = [
     },
 
     colProps: {
-      span: 22
+      span: 16
+    }
+  },
+  {
+    label: "园区选择",
+    prop: "parkId",
+    valueType: "select",
+    options: computed(() => parkOptions.value),
+    fieldProps: {
+      placeholder: "全部园区",
+      value: "id",
+      clearable: true,
+      filterable: true
+    },
+
+    colProps: {
+      span: 8
     }
   },
   {

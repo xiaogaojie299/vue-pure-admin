@@ -75,7 +75,7 @@ const {
   // handleDatabase,
   handleSizeChange,
   handleCurrentChange,
-  handleSelectionChange
+  handleSelectionChange,
 } = useRole(treeRef);
 
 onMounted(() => {
@@ -311,6 +311,7 @@ onMounted(() => {
         </div>
         <el-tree-v2
           ref="treeRef"
+          node-key="id"
           show-checkbox
           :data="treeData"
           :props="treeProps"

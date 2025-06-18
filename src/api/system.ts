@@ -44,7 +44,8 @@ export const getRoleList = (data?: object) => {
 
 export const addRole = (data?: object) => {
   return http.request<ResultTable>("post", baseUrlApi("system/role"), { data });
-};
+}; 
+// 编辑
 export const editRole = (data?: object) => {
   return http.request<ResultTable>(
     "put",
@@ -114,6 +115,13 @@ export const getRoleMenu = (data?: object) => {
     data
   });
 };
+
+export  const getRoleMenuTreeselect= (data?: object) => {
+  return http.request<Result>("get", baseUrlApi("system/menu/roleMenuTreeselect"), {
+    data
+  });
+};
+
 
 export const getDeptList = (data?: object) => {
   return http.request<Result>("get", baseUrlApi("system/dept/list"), { data });

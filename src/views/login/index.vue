@@ -63,8 +63,8 @@ const { locale, translationCh, translationEn } = useTranslationLang();
 import { getAllOrg } from "@/api/system";
 
 const ruleForm = reactive({
-  username: "admin",
-  password: "admin123"
+  username: "",
+  password: ""
 });
 
 
