@@ -41,7 +41,6 @@
             </el-col>
             <el-col :span="12">
               <el-form-item label="*营业执照：">
-                {{  formData.coverUrl  }}  
                 <el-image
                   style="width: 100px; height: 100px"
                   :src="formData.coverUrl"

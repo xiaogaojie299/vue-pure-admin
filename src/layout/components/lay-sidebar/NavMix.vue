@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { isAllEmpty } from "@pureadmin/utils";
 import { useNav } from "@/layout/hooks/useNav";
+import { useOrg } from "@/layout/hooks/useOrg";
+
 import { transformI18n } from "@/plugins/i18n";
 import LaySearch from "../lay-search/index.vue";
 import LayNotice from "../lay-notice/index.vue";
@@ -18,6 +20,7 @@ import AccountSettingsIcon from "~icons/ri/user-settings-line";
 import LogoutCircleRLine from "~icons/ri/logout-circle-r-line";
 import Setting from "~icons/ri/settings-3-line";
 import Check from "~icons/ep/check";
+import Switch from "~icons/ep/switch";
 
 const menuRef = ref();
 const defaultActive = ref(null);
@@ -42,6 +45,7 @@ const {
   getDropdownItemStyle,
   getDropdownItemClass
 } = useNav();
+const { allOrgList, handleVisibleSelectOrganize } = useOrg();
 
 function getDefaultActive(routePath) {
   const wholeMenus = usePermissionStoreHook().wholeMenus;
@@ -127,8 +131,17 @@ watch(
               :icon="AccountSettingsIcon"
               style="margin: 5px"
             />
-            {{ t("buttons.pureAccountSettings") }}
+            {{ t("buttons.pureAccountSettings") }} 
           </el-dropdown-item>
+
+          <el-dropdown-item @click="handleVisibleSelectOrganize" v-if="allOrgList.length > 0">
+              <IconifyIconOffline
+                :icon="Switch"
+                style="margin: 5px"
+              />
+              切换组织
+            </el-dropdown-item>
+
           <el-dropdown-menu class="logout">
             <el-dropdown-item @click="logout">
               <IconifyIconOffline

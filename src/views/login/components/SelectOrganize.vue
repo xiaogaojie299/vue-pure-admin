@@ -20,9 +20,22 @@ const onSubmit = async () => {
     console.log(current.value, "提交了");
   });
 };
+const initCurrent = (value) => {
+  console.log(value, "初始化");
+  current.value = value;
+};
+const getCurrent = () => {
+  let find = props.list.find(v => v.value == current.value);  
+  return {
+    id: find.value,
+    selectItem: find
+  }
+};
 
 defineExpose({
-  onSubmit
+  initCurrent,
+  onSubmit,
+  getCurrent
 });
 </script>
 
@@ -37,3 +50,14 @@ defineExpose({
     </div>
   </el-card>
 </template>
+
+<style scoped lang="scss"> 
+::v-deep {
+  .plus-check-card-group {
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: column;
+  align-items: center;
+}
+}
+</style>

@@ -51,7 +51,7 @@ export function useOrgTags(tableRef: Ref) {
       showLabel: "未通过",
       label: "驳回",
       reverseLable: "",
-      value: 1
+      value: 2
     }
   }; 
   const columns: TableColumnList = [

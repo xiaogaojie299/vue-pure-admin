@@ -19,7 +19,15 @@ import { useUserStoreHook } from "@/store/modules/user";
 import { initRouter, getTopMenu } from "@/router/utils";
 import { bg, avatar, illustration } from "./utils/static";
 import { ReImageVerify } from "@/components/ReImageVerify";
-import { ref, toRaw, reactive, watch, computed } from "vue";
+import {
+  ref,
+  toRaw,
+  reactive,
+  watch,
+  computed,
+  onMounted,
+  onUnmounted
+} from "vue";
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
 import { useTranslationLang } from "@/layout/hooks/useTranslationLang";
 import { useDataThemeChange } from "@/layout/hooks/useDataThemeChange";
@@ -50,7 +58,7 @@ const currentPage = computed(() => {
 });
 const isAdmin = computed(() => {
   return useUserStoreHook().orgId == 0;
-})
+});
 
 const { t } = useI18n();
 const { initStorage } = useLayout();
@@ -67,37 +75,74 @@ const ruleForm = reactive({
   password: ""
 });
 
-
+/** 退出登录 */
+function logout() {
+  useUserStoreHook().logOut();
+}
 const handleVisibleSelectOrganize = async () => {
-
-  let allOrg = await getAllOrg();
-  
-  console.log("allOrg", allOrg)
+  let responseData = await getAllOrg();
+  let allOrg = responseData?.data;
+  if (allOrg?.length > 0) {
+    allOrg = allOrg.map(v => {
+      // 这里用的组件 我就直接按照组件的数据格式来写
+      return {
+        ...v,
+        title: v.name,
+        value: v.id,
+        avatar:
+          v?.logo ||
+          "https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg"
+      };
+    });
+  }
   const selectOrganizeRef = ref();
+  if (allOrg?.length === 1) {
+    let id = allOrg[0].id;
+    useUserStoreHook().SET_ORGID(id);
+    goJumpRouter();
+    return;
+  }
+
+  // 这是多个组织的时候
   addDialog({
-    width: "60%",
+    width: "40%",
     title: "检测到您有多个组织，请先选择登录组织",
     draggable: true,
     alignCenter: true,
+    closeOnClickModal: false,
+    closeOnPressEscape: false,
     center: true,
     beforeSure: async (done, { options, index }) => {
-      await selectOrganizeRef.value?.onSubmit();
+      // await selectOrganizeRef.value?.onSubmit();
+      const { id } = selectOrganizeRef.value?.getCurrent();
+      useUserStoreHook().SET_ORGID(id);
       done();
-
-      router
-        .push(getTopMenu(true).path)
-        .then(() => {
-          message(t("login.pureLoginSuccess"), { type: "success" });
-        })
-        .finally(() => (disabled.value = false));
+      goJumpRouter();
     },
+
+    beforeCancel: (done, { options, index }) => {
+      // 点击取消清除token
+      logout();
+      disabled.value = false;
+      done(); // 需要关闭把注释解开即可
+    },
+
     contentRenderer: () => (
       <ComponentSelectOrganize
-        list={list}
+        list={allOrg}
         ref={el => (selectOrganizeRef.value = el)}
       />
     )
   });
+};
+
+const goJumpRouter = () => {
+  router
+    .push(getTopMenu(true).path)
+    .then(() => {
+      message(t("login.pureLoginSuccess"), { type: "success" });
+    })
+    .finally(() => (disabled.value = false));
 };
 const onLogin = async (formEl: FormInstance | undefined) => {
   if (!formEl) return;
@@ -114,7 +159,6 @@ const onLogin = async (formEl: FormInstance | undefined) => {
             // 获取后端路由
             return initRouter().then(asyncRoute => {
               console.log("asyncRoute", asyncRoute);
-
               disabled.value = true;
               let list = [
                 {
@@ -132,14 +176,11 @@ const onLogin = async (formEl: FormInstance | undefined) => {
                     "https://fuss10.elemecdn.com/1/34/19aa98b1fcb2781c4fba33d850549jpeg.jpeg"
                 }
               ];
-
               // 如果是平台管理员账号登录，则不选择组织，如果是组织账号登录，需要选择组织的账号；
-              if (isAdmin.value)  {
-                router.push(getTopMenu(true).path).then(() => {
-                  message(t("login.pureLoginSuccess"), { type: "success" });
-                }).finally(() => (disabled.value = false))
+              if (isAdmin.value) {
+                goJumpRouter();
                 return;
-              };
+              }
               handleVisibleSelectOrganize();
             });
           } else {
@@ -171,6 +212,22 @@ watch(checked, bool => {
 });
 watch(loginDay, value => {
   useUserStoreHook().SET_LOGINDAY(value);
+});
+
+const handleKeyDown = () => {
+  const orgId = useUserStoreHook().orgId;
+  // 检查是否是 F5 键（keyCode 116）
+  if (orgId === -1) {
+    event.preventDefault(); // 阻止默认刷新行为（可选）
+    useUserStoreHook().logOut();
+  }
+};
+onMounted(() => {
+  window.addEventListener("beforeunload", handleKeyDown);
+});
+
+onUnmounted(() => {
+  window.removeEventListener("beforeunload", handleKeyDown);
 });
 </script>
 

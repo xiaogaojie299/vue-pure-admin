@@ -102,6 +102,8 @@ export const useUserStore = defineStore("pure-user", {
               let responseData = await getUserIdentity();
               if (responseData?.data === "system") {
                 this.SET_ORGID(0);
+              } else {
+                this.SET_ORGID(-1);
               }
             }
             resolve(data);
