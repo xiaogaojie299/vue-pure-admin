@@ -4,11 +4,13 @@ import { getAllOrg } from "@/api/system";
 
 import { addDialog } from "@/components/ReDialog";
 import ComponentSelectOrganize from "@/views/login/components/SelectOrganize.vue";
-import { use } from "echarts";
+
+import { useRouter } from "vue-router";
 
 
 export function useOrg() {
   const allOrgList = ref([]);
+  const router = useRouter();
 
   const handleVisibleSelectOrganize = async () => {
     let allOrg = allOrgList.value;
@@ -70,12 +72,23 @@ export function useOrg() {
     });
   };
 
+  const handleGoOrgDetail = () => { 
+    console.log(router);
+    router?.push({
+      name: "OrganizationalManagementDetails",
+      query: {
+        id: useUserStoreHook().orgId
+      }
+    });
+  };
+
   onMounted(() => {
     initData();
   });
 
   return {
     allOrgList,
-    handleVisibleSelectOrganize
+    handleVisibleSelectOrganize,
+    handleGoOrgDetail
   };
 }

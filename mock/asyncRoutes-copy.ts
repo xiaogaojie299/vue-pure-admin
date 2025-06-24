@@ -257,7 +257,7 @@ const auditPendingManagement = {
       path: "/audit-pending/management/org-detail",
       name: "AuditPendingManagementOrgDetail",
       meta: {
-        title: "添加组织详情",
+        title: "组织详情",
         showLink: false,
       },
       component: "audit-pending-management/org/detail.vue"

@@ -14,6 +14,16 @@ import NProgress from "../progress";
 import { getToken, formatToken } from "@/utils/auth";
 import { useUserStoreHook } from "@/store/modules/user";
 import { message } from "../message";
+/**
+ * 校验 config.url 是否包含指定的关键字数组
+ * @param config - 包含 url 属性的对象
+ * @param keywords - 要检查的关键字字符串数组
+ * @returns boolean - 如果 url 包含任意一个关键字，返回 true；否则返回 false
+ */
+function isUrlContainKeywords(config: { url: string }, keywords: string[]): boolean {
+  return keywords.some(keyword => config.url.includes(keyword));
+}
+
 
 // 相关配置请参考：www.axios-js.com/zh-cn/docs/#axios-request-config-1
 const defaultConfig: AxiosRequestConfig = {
@@ -81,52 +91,50 @@ class PureHttp {
               const data = getToken();
             if (data) {
               const orgId = useUserStoreHook().orgId ?? "";
-              
+              let noOrgIdApiList = ["/upload", "org-field/save"];
               let isUploadApi = config.url.includes("/upload");
-              if (!isUploadApi) {
-
+              
+              if (!isUrlContainKeywords(config, noOrgIdApiList)) {
                 if (config.method == "get") {
                   // GET 请求加到 params 中
                   config.params = {
                     orgId,
                     ...config.data,
-                    ...config.params,
+                    ...config.params
                   };
                 } else if (["post", "put"].includes(config.method)) {
                   // POST 请求加到 data 中
                   config.data = {
                     orgId,
-                    ...config.data,
+                    ...config.data
                   };
                 }
               }
 
-                const now = new Date().getTime();
-                const expired = parseInt(data.expires) - now <= 0;
-                if (expired) {
-                  if (!PureHttp.isRefreshing) {
-                    PureHttp.isRefreshing = true;
-                    // token过期刷新
-                    useUserStoreHook()
-                      .handRefreshToken({ refreshToken: data.refreshToken })
-                      .then(res => {
-                        const token = res.data.accessToken;
-                        config.headers["Authorization"] = formatToken(token);
-                        PureHttp.requests.forEach(cb => cb(token));
-                        PureHttp.requests = [];
-                      })
-                      .finally(() => {
-                        PureHttp.isRefreshing = false;
-                      });
-                  }
-                  resolve(PureHttp.retryOriginalRequest(config));
-                } else {
-                  config.headers["Authorization"] = formatToken(
-                    data.accessToken
-                  );
-                  resolve(config);
+              const now = new Date().getTime();
+              const expired = parseInt(data.expires) - now <= 0;
+              if (expired) {
+                if (!PureHttp.isRefreshing) {
+                  PureHttp.isRefreshing = true;
+                  // token过期刷新
+                  useUserStoreHook()
+                    .handRefreshToken({ refreshToken: data.refreshToken })
+                    .then(res => {
+                      const token = res.data.accessToken;
+                      config.headers["Authorization"] = formatToken(token);
+                      PureHttp.requests.forEach(cb => cb(token));
+                      PureHttp.requests = [];
+                    })
+                    .finally(() => {
+                      PureHttp.isRefreshing = false;
+                    });
                 }
+                resolve(PureHttp.retryOriginalRequest(config));
               } else {
+                config.headers["Authorization"] = formatToken(data.accessToken);
+                resolve(config);
+              }
+            } else {
                 resolve(config);
               }
             });

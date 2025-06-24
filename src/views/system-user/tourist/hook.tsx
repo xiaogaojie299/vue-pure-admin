@@ -110,6 +110,11 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
       prop: "phonenumber",
       minWidth: 160
     },
+    {
+      label: "绑定组织",
+      prop: "orgNames",
+      minWidth: 160
+    },
 
     {
       label: "注册时间",
@@ -139,7 +144,7 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
     {
       label: "备注",
       minWidth: 90,
-      prop: "remark",
+      prop: "remark"
     },
     {
       label: "操作",

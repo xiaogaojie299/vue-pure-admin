@@ -16,6 +16,7 @@ import LogoutCircleRLine from "~icons/ri/logout-circle-r-line";
 import Setting from "~icons/ri/settings-3-line";
 import Check from "~icons/ep/check";
 import Switch from "~icons/ep/switch";
+import View from "~icons/ep/view";
 
 const {
   layout,
@@ -32,7 +33,7 @@ const {
   getDropdownItemClass
 } = useNav();
 
-const { allOrgList, handleVisibleSelectOrganize } = useOrg();
+const { allOrgList, handleVisibleSelectOrganize, handleGoOrgDetail } = useOrg();
 const { t, locale, translationCh, translationEn } = useTranslationLang();
 </script>
 
@@ -78,6 +79,16 @@ const { t, locale, translationCh, translationEn } = useTranslationLang();
               {{ t("buttons.pureAccountSettings") }} 
             </el-dropdown-item>
 
+
+            <el-dropdown-item @click="handleGoOrgDetail" v-if="allOrgList.length > 0">
+              <IconifyIconOffline
+                :icon="View"
+                style="margin: 5px"
+              />
+              组织详情
+            </el-dropdown-item>
+
+
             <el-dropdown-item @click="handleVisibleSelectOrganize" v-if="allOrgList.length > 0">
               <IconifyIconOffline
                 :icon="Switch"
@@ -85,7 +96,6 @@ const { t, locale, translationCh, translationEn } = useTranslationLang();
               />
               切换组织
             </el-dropdown-item>
-
 
             <el-dropdown-item @click="logout">
               <IconifyIconOffline

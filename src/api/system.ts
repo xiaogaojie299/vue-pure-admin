@@ -213,10 +213,17 @@ export const getOrgFieldGroup = (data?: object) => {
 };
 
 
-export const saveOrgFieldGroup = (data?: object) => {
-  return http.request<Result>("post", baseUrlApi(`system/org-field/save`), {
-    data
-  });
+export const saveOrgFieldGroup = (params?: object) => {
+  return http.request<Result>(
+    "post",
+    baseUrlApi(`system/org-field/save`),
+    { data: params },
+    {
+      headers: {
+        "Content-Type": "application/json"
+      }
+    }
+  );
 };
 
 
@@ -251,8 +258,11 @@ export const saveOrgFields= (data?: object) => {
   return http.request<Result>(
     "post",
     baseUrlApi(`system/org-field/save`),
+    { data },
     {
-      data
+      headers: {
+        "Content-Type": "application/json"
+      }
     }
   );
 };

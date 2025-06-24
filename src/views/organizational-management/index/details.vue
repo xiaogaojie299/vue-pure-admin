@@ -27,6 +27,12 @@ const route = useRoute();
 
 const id = computed(() => route.query.id || undefined);
 
+const goEditOrg = () => {
+  router.push({
+    name: "OrganizationalManagementAdd",
+    query: { id: id.value }
+  });
+};
 const initGroupData = () => {
   getOrgFieldGroup().then(async (res) => {
     // 这里把状态正常的显示出来
@@ -124,6 +130,7 @@ onMounted(async () => {
   </ScrollAnchorNav>
   <div class="text-center mt-5">
     <el-button type="" round class="w-[180px]!" @click="router.go(-1)">返回</el-button>
+    <el-button type="primary" round class="w-[180px]!" @click="goEditOrg">编辑</el-button>
   </div>
   </div>
 </template>

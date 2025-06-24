@@ -382,6 +382,21 @@
         </el-form-item>
       </template>
 
+      <template v-else>
+        <el-form-item label="" prop="rongyujieshao">
+          <template #label>
+            <div class="flex items-center">
+              <template v-if="fields[13]?.remark">
+                <el-tooltip :content="fields[14]?.remark" placement="top">
+                  <EpQuestionFilled></EpQuestionFilled>
+                </el-tooltip>
+              </template>
+            </div>
+          </template>
+          <Editor v-model:value="form.rongyujieshao"></Editor>
+        </el-form-item>
+      </template>
+
       <el-row :gutter="20">
         <el-col :span="6">
           <el-form-item label="登录账号:" prop="loginAccount">

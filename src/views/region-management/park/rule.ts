@@ -48,13 +48,7 @@ export const formRules = reactive(<FormRules>{
     {
       required: true,
       message: "详细地址不能为空",
-      trigger: "blur"
-    },
-    {
-      min: 5,
-      max: 100,
-      message: "地址长度在5到100个字符之间",
-      trigger: "blur"
+      trigger: "change"
     }
   ]
   // longitude: [

@@ -20,6 +20,20 @@ export const formRules = reactive(<FormRules>{
       // trigger: "click" // 如果想在点击确定按钮时触发这个校验，trigger 设置成 click 即可
     }
   ],
+  type: [
+    {
+      required: true,
+      message: "部门类型为必填项",
+      trigger: "blur"
+    }
+  ],
+  externalOrgId: [
+    {
+      required: true,
+      message: "外部组织为必填项",
+      trigger: "blur"
+    }
+  ],
   email: [
     {
       validator: (rule, value, callback) => {

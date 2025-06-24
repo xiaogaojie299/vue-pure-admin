@@ -74,8 +74,10 @@ export function useDept() {
           remark: row?.remark ?? "",
 
           deptId: row?.deptId ?? undefined,
+          externalOrgId: row?.externalOrgId ?? undefined,
+          externalOrgName: row?.externalOrgName ?? "",
           orderNum: 1,
-          type: 1 // 类型1内部部门（管理平台只有内部部门） 2外部组织
+          type: row?.type ?? 1 // 类型1内部部门（管理平台只有内部部门） 2外部组织
         }
       },
       width: "40%",

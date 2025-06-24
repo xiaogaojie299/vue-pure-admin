@@ -58,7 +58,7 @@ export const routes = [
         path: "/audit-pending/management/org-detail",
         name: "AuditPendingManagementOrgDetail",
         meta: {
-          title: "添加组织详情",
+          title: "组织详情",
           showLink: false
         },
         component: "audit-pending-management/org/detail.vue"
@@ -88,7 +88,7 @@ export const routes = [
         path: "/system-user/tourist",
         name: "SystemUserTourist",
         meta: {
-          title: "游客用户",
+          title: "游客用户"
         },
         component: "/system-user/tourist/index.vue"
       },
@@ -96,7 +96,7 @@ export const routes = [
         path: "/organizational-management",
         meta: {
           icon: "",
-          title: "组织企业用户",
+          title: "组织企业用户"
         },
         children: [
           {
@@ -104,7 +104,7 @@ export const routes = [
             path: "/organizational-management/index",
             name: "OrganizationalManagementIndex",
             meta: {
-              title: "组织管理",
+              title: "组织管理"
             },
             component: "organizational-management/index/index.vue"
           },
@@ -113,7 +113,7 @@ export const routes = [
             path: "/organizational-structure/org-user",
             name: "OrganizationalManagementOrgUser",
             meta: {
-              title: "组织用户管理",
+              title: "组织用户管理"
             },
             component: "organizational-management/user/index.vue"
           },
@@ -172,14 +172,14 @@ export const routes = [
         path: "/categoriesManagement",
         name: "CategoriesManagement",
         meta: {
-          title: "分类信息配置",
+          title: "分类信息配置"
         },
         children: [
           {
             path: "/categories-management/org-tags",
             name: "CategoriesManagementOrgTags",
             meta: {
-              title: "组织标签管理",
+              title: "组织标签管理"
             },
             component: "/categories-management/org-tags/index.vue"
           },
@@ -188,7 +188,7 @@ export const routes = [
             path: "/categories-management/org-nature",
             name: "CategoriesManagementOrgNature",
             meta: {
-              title: "组织性质管理",
+              title: "组织性质管理"
             },
             component: "categories-management/org-nature/index.vue"
           },
@@ -196,7 +196,7 @@ export const routes = [
             path: "/categories-management/industry-category",
             name: "CategoriesManagementIndustryCategory",
             meta: {
-              title: "产业类型",
+              title: "产业类型"
             },
             component: "categories-management/industry-category/index.vue"
           },
@@ -204,7 +204,7 @@ export const routes = [
             path: "/categories-management/org-category",
             name: "CategoriesManagementOrgCategory",
             meta: {
-              title: "组织分类",
+              title: "组织分类"
             },
             component: "categories-management/org-category/index.vue"
           },
@@ -223,7 +223,7 @@ export const routes = [
         path: "/system-setting/content",
         name: "SystemSettingContent",
         meta: {
-          title: "系统内容配置",
+          title: "系统内容配置"
         },
         children: [
           {
@@ -257,9 +257,17 @@ export const routes = [
             path: "/system-setting/org-filed",
             name: "SystemSettingOrgFiled",
             meta: {
-              title: "组织配置管理"
+              title: "组织字段管理"
             },
             component: "system-setting/org-filed/index.vue"
+          },
+          {
+            path: "/organizational-structure/score",
+            name: "OrganizationalManagementScore",
+            meta: {
+              title: "创新积分权重设置"
+            },
+            component: "organizational-management/score/index.vue"
           }
         ]
       },
@@ -321,6 +329,37 @@ export const routes = [
           showParent: true
         }
       }
+    ]
+  }
+];
+
+export const orgOnlyRoutes = [
+  // 组织页面独有页面
+  {
+    path: "/organizational-only-management",
+    name: "OrganizationalOnlyManagement",
+    meta: {
+      title: "组织信息管理",
+      rank: 8,
+      icon: "ep:house"
+    },
+    children: [
+      {
+        path: "/organizational-only-management/index",
+        name: "OrganizationalOnlyManagementIndex",
+        meta: {
+          title: "组织园区"
+        },
+        component: "organizational-only-management/index.vue"
+      },
+      // {
+      //   path: "/organizational-only-management/detail",
+      //   name: "OrganizationalOnlyManagementDetail",
+      //   meta: {
+      //     title: "组织信息"
+      //   },
+      //   component: "organizational-only-management/detail.vue"
+      // }
     ]
   }
 ];

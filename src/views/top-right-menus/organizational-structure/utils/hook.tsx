@@ -469,6 +469,7 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
   }
 
   function openDialog(title = "新增", row?: FormItemProps) {
+    console.log("添加", formatHigherDeptOptions(higherDeptOptions.value));
     addDialog({
       title: `${title}人员`,
       props: {
@@ -530,13 +531,10 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
         id: v.deptId
       };
     })
+    let _treeData = handleTree(cloneDeep(data));
 
-    higherDeptOptions.value = handleTree(data);
-    treeData.value = handleTree(data);
-
-    console.log("treeData.value", treeData.value);
-
-    console.log("higherDeptOptions.value", higherDeptOptions.value);
+    higherDeptOptions.value = _treeData;
+    treeData.value = _treeData;
 
     treeLoading.value = false;
 
