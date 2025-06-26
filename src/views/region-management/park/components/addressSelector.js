@@ -32,7 +32,7 @@ export class DadukouDistrictMap {
         });
 
         const options = {
-          city: "重庆市",
+          city: "",
           citylimit: true
         };
         // 创建地点搜索服务

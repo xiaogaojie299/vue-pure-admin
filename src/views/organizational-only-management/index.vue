@@ -99,7 +99,7 @@ const getList = () => {
     }
    }
   ).then((res) => {
-    dataList.value = res.data.records;
+    dataList.value = res.data;
   }).finally(() => {
   loading.value = false;
   });

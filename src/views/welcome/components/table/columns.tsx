@@ -13,7 +13,11 @@ export function useColumns() {
     {
       sortable: true,
       label: "序号",
-      prop: "id"
+      prop: "id",
+      minWidth: 90,
+      formatter: (row, column, cellValue, index) => {
+        return index + 1;
+      }
     },
     {
       sortable: true,

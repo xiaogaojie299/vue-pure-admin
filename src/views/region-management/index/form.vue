@@ -3,6 +3,7 @@ import { ref } from "vue";
 import { formRules } from "./rule";
 import { FormProps } from "./types";
 import ReUploadImage from "@/components/ReUploadImage/index.vue";
+import AreaSelect from "../components/AreaSelect.vue";
 
 const props = withDefaults(defineProps<FormProps>(), {
   formInline: () => ({
@@ -58,22 +59,52 @@ defineExpose({ getRef });
     </el-form-item>
     <template  v-if="newFormInline.level == 2" >
       <el-form-item label="二级区域" prop="province">
-        <el-input v-model="newFormInline.province" placeholder="请输入" clearable></el-input>
+        <AreaSelect 
+        v-model:value="newFormInline.province"
+        :newArea="{
+          province: newFormInline?.parentNames[1],
+          city: newFormInline.city,
+          district: newFormInline.district,
+          street: newFormInline.street
+        }" 
+        type="province"
+        ></AreaSelect>
       </el-form-item>
     </template>
     <template  v-else-if="newFormInline.level == 3" >
       <el-form-item label="三级区域" prop="market">
-        <el-input v-model="newFormInline.market" placeholder="请输入" clearable></el-input>
+        <AreaSelect  
+        v-model:value="newFormInline.market"
+        :newArea="{
+          province: newFormInline?.parentNames[1],
+          city: newFormInline.city,
+          district: newFormInline.district,
+          street: newFormInline.street
+        }" type="city"></AreaSelect>
       </el-form-item>
     </template>
     <template  v-else-if="newFormInline.level == 4" >
       <el-form-item label="四级区域" prop="area">
-        <el-input v-model="newFormInline.area" placeholder="请输入" clearable></el-input>
+        <AreaSelect 
+         v-model:value="newFormInline.area"
+         :newArea="{
+          province: newFormInline?.parentNames[1],
+          city: newFormInline.parentNames[2],
+          district: newFormInline.district,
+          street: newFormInline.street
+        }" type="district"></AreaSelect>
       </el-form-item>
     </template>
     <template  v-else-if="newFormInline.level == 5" >
       <el-form-item label="五级区域" prop="street">
-        <el-input v-model="newFormInline.street" placeholder="请输入" clearable></el-input>
+        <AreaSelect  
+        v-model:value="newFormInline.street"
+        :newArea="{
+          province: newFormInline?.parentNames[1],
+          city: newFormInline?.parentNames[2],
+          district: newFormInline?.parentNames[3],
+          street: newFormInline.street
+        }" type="street"></AreaSelect>
       </el-form-item>
     </template>
     <template v-if="newFormInline.level > 1">

@@ -6,6 +6,7 @@ import { addDialog } from "@/components/ReDialog";
 import ComponentSelectOrganize from "@/views/login/components/SelectOrganize.vue";
 
 import { useRouter } from "vue-router";
+import { createTypeReferenceDirectiveResolutionCache } from "typescript";
 
 
 export function useOrg() {
@@ -48,6 +49,10 @@ export function useOrg() {
   }
   
   const initData = () => {
+    if (useUserStoreHook().orgId === 0) {
+      return;
+    }
+    
     getAllOrg().then(res => {
       let allOrg = res?.data;
 

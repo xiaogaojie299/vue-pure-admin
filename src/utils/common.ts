@@ -172,3 +172,71 @@ export function splitTreeChildren(tree: TreeNode[]) {
     childrenMap
   };
 }
+
+
+interface ModuleItem {
+  id: number;
+  orgId: number;
+  moduleType: number;
+  name: string;
+  tips: string | null;
+  fieldType: number;
+  configKey: number;
+  submitValue: any;
+  createTime: string;
+  remark: string | null;
+}
+
+type GroupedModules = Record<number, ModuleItem[]>;
+
+/**
+ * 根据 moduleType 归类数据
+ * @param data 原始数据数组
+ * @returns 按 moduleType 分组的对象
+ */
+export function groupByModuleType(data: ModuleItem[]): GroupedModules {
+  return data.reduce((acc, item) => {
+    const key = item.moduleType;
+    if (!acc[key]) {
+      acc[key] = [];
+    }
+    acc[key].push(item);
+    return acc;
+  }, {} as GroupedModules);
+}
+
+/**
+ * 将二维数组降维成一维数组，并过滤空值（如 undefined、null）
+ * @param array 二维数组
+ * @returns 一维数组
+ */
+export function flatten2DArray<T>(array: (T | T[])[]): T[] {
+  return array
+    .flat()
+    .filter((item): item is T => item !== undefined && item !== null);
+}
+
+export function toQueryString(data: Record<string, any>): string {
+  return Object.entries(data)
+    .filter(([_, value]) => value !== undefined && value !== null)
+    .map(
+      ([key, value]) =>
+        `${encodeURIComponent(key)}=${encodeURIComponent(value)}`
+    )
+    .join("&");
+}
+
+/**
+ * 判断一个对象是否为空
+ * @param obj - 需要检查的对象
+ * @returns 如果对象为空，返回 true；否则返回 false
+ */
+export function isEmptyObject(obj: any): boolean {
+  // 检查传入的参数是否为对象类型
+  if (typeof obj !== 'object' || obj === null) {
+    return false;
+  }
+
+  // 使用 Object.keys 获取对象的所有可枚举属性的数组，并检查其长度
+  return Object.keys(obj).length === 0;
+}

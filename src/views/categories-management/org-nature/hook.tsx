@@ -57,7 +57,10 @@ export function useOrgNature(tableRef: Ref) {
     {
       label: "序号",
       prop: "id",
-      minWidth: 60
+      minWidth: 60,
+      formatter: (row, column, cellValue, index) => {
+        return index + 1;
+      }
     },
 
     {

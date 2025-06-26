@@ -44,7 +44,10 @@ export function useOrgTags(tableRef: Ref) {
     {
       label: "序号",
       prop: "id",
-      minWidth: 60
+      minWidth: 60,
+      formatter: (row, column, cellValue, index) => {
+        return index + 1;
+      }
     },
     {
       label: "标签名称",

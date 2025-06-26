@@ -126,13 +126,13 @@ watch(
           <p v-if="username" class="dark:text-white">{{ username }}</p>
         </span>
         <template #dropdown>
-          <el-dropdown-item @click="toAccountSettings">
+          <!-- <el-dropdown-item @click="toAccountSettings">
             <IconifyIconOffline
               :icon="AccountSettingsIcon"
               style="margin: 5px"
             />
             {{ t("buttons.pureAccountSettings") }} 
-          </el-dropdown-item>
+          </el-dropdown-item> -->
 
           <el-dropdown-item @click="handleVisibleSelectOrganize" v-if="allOrgList.length > 0">
               <IconifyIconOffline

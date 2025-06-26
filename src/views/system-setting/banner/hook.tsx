@@ -48,7 +48,10 @@ export function useBanner(tableRef: Ref) {
     {
       label: "序号",
       prop: "id",
-      minWidth: 60
+      minWidth: 90,
+      formatter: (row, column, cellValue, index) => {
+        return index + 1;
+      }
     },
     {
       label: "banner名称",

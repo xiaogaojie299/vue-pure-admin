@@ -91,8 +91,11 @@ class PureHttp {
               const data = getToken();
             if (data) {
               const orgId = useUserStoreHook().orgId ?? "";
-              let noOrgIdApiList = ["/upload", "org-field/save"];
-              let isUploadApi = config.url.includes("/upload");
+              let noOrgIdApiList = [
+                "/upload",
+                "org-field/save",
+                "score/get-org-index"
+              ];
               
               if (!isUrlContainKeywords(config, noOrgIdApiList)) {
                 if (config.method == "get") {

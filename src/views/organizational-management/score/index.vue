@@ -51,23 +51,6 @@ onMounted(() => {
 const groupedData = ref<{ [key: string]: ScoreSet[] }>({});
 const types = ref<string[]>([]);
 
-// 表头合并方法
-const objectSpanMethod = ({ row, column, rowIndex, columnIndex }: any) => {
-  if (columnIndex === 0) {
-    if (rowIndex % 2 === 0) {
-      return {
-        rowspan: 2,
-        colspan: 1
-      };
-    } else {
-      return {
-        rowspan: 0,
-        colspan: 0
-      };
-    }
-  }
-};
-
 const updateScoreSet = (row: any ) => {
   editScoreSet(row).then((res) => {
       message('添加成功', {type: 'success'});
@@ -89,7 +72,6 @@ const updateScoreSet = (row: any ) => {
             :data="groupedData[type]"
             border
             style="width: 100%"
-            :span-method="objectSpanMethod"
           >
             <el-table-column
               type="index"
@@ -108,7 +90,8 @@ const updateScoreSet = (row: any ) => {
                     v-model="row.beginValue"
                     controls-position="right"
                     :step="1"
-                    @change="value => updateScoreSet(row)"
+                    :precision="2" 
+                    @blur="value => updateScoreSet(row)"
                   ></el-input-number>
                 </template>
               </el-table-column>
@@ -117,6 +100,8 @@ const updateScoreSet = (row: any ) => {
                   <el-input-number
                     v-model="row.growValue"
                     controls-position="right"
+                    :precision="2" 
+                    @blur="value => updateScoreSet(row)"
                     :step="1"
                   ></el-input-number>
                 </template>
@@ -126,6 +111,8 @@ const updateScoreSet = (row: any ) => {
                   <el-input-number
                     v-model="row.staValue"
                     controls-position="right"
+                    :precision="2" 
+                    @blur="value => updateScoreSet(row)"
                     :step="1"
                   ></el-input-number>
                 </template>
@@ -136,6 +123,8 @@ const updateScoreSet = (row: any ) => {
                 <el-input-number
                   v-model="row.referValue"
                   controls-position="right"
+                  :precision="2" 
+                  @blur="value => updateScoreSet(row)"
                   :step="1"
                 ></el-input-number>
               </template>

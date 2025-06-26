@@ -56,21 +56,21 @@ const {
         />
       </el-form-item>
       <el-form-item label="所属区域：" prop="region">
-      <el-cascader
-        v-model="filterParams.region"
-        :options="treeData"
-        :props="{ 
-          checkStrictly: true, // 允许选择任意一级
-          emitPath: true,     // 只返回当前选中的值
-          label: 'name',
-          value: 'id'
-        }"
-        @change="handleCascaderChange"
-        placeholder="请选择区域"
-        clearable
-        filterable
-      />
-</el-form-item>
+        <el-cascader
+          v-model="filterParams.region"
+          :options="treeData"
+          :props="{
+            checkStrictly: true, // 允许选择任意一级
+            emitPath: true, // 只返回当前选中的值
+            label: 'name',
+            value: 'id'
+          }"
+          @change="handleCascaderChange"
+          placeholder="请选择区域"
+          clearable
+          filterable
+        />
+      </el-form-item>
       <el-form-item>
         <el-button
           type="primary"
@@ -86,12 +86,7 @@ const {
       </el-form-item>
     </el-form>
 
-    <PureTableBar
-      title="园区管理"
-      :columns="columns"
-      @refresh="onSearch"
-    >
-
+    <PureTableBar title="园区管理" :columns="columns" @refresh="onSearch">
       <template #buttons>
         <el-button
           type="primary"
@@ -102,7 +97,6 @@ const {
         </el-button>
       </template>
       <template v-slot="{ size, dynamicColumns }">
-
         <div
           v-if="selectedNum > 0"
           v-motion-fade
@@ -145,53 +139,57 @@ const {
           @page-size-change="handleSizeChange"
           @page-current-change="handleCurrentChange"
         >
+          <template #regionRelationName="{ row }">
+            <div v-for="item in row.regionRelationName?.split(',')" :key="item">
+              {{ item }}
+            </div>
+          </template>
           <template #status="{ row }">
-              <el-switch
-                v-model="row.status"
-                inline-prompt
-                :active-value="0"
-                :inactive-value="1"
-                active-text="展示中"
-                disabled
-                inactive-text="已隐藏"
-              />
+            <el-switch
+              v-model="row.status"
+              inline-prompt
+              :active-value="0"
+              :inactive-value="1"
+              active-text="展示中"
+              disabled
+              inactive-text="已隐藏"
+            />
           </template>
           <template #operation="{ row }">
+            <el-button
+              link
+              type="primary"
+              :size="size"
+              @click="goEditDetail(row.id)"
+            >
+              编辑
+            </el-button>
+            <el-popconfirm
+              title="是否确认删除此园区?"
+              @confirm="handleDelete(row)"
+            >
+              <template #reference>
+                <el-button class="reset-margin" link type="danger" :size="size">
+                  删除
+                </el-button>
+              </template>
+            </el-popconfirm>
+
+            <el-popconfirm
+              :title="`是否${statusMap[row.status]?.reverseLable}确认此园区?`"
+              @confirm="handleChangeStatus(row)"
+            >
+              <template #reference>
                 <el-button
+                  class="reset-margin"
                   link
                   type="primary"
                   :size="size"
-                  @click="goEditDetail(row.id)"
                 >
-                  编辑
+                  {{ statusMap[row.status]?.reverseLable }}
                 </el-button>
-                <el-popconfirm title="是否确认删除此园区?" @confirm="handleDelete(row)">
-                  <template #reference>
-                    <el-button
-                        class="reset-margin"
-                        link
-                        type="danger"
-                        :size="size"
-                      >
-                        删除
-                      </el-button>
-                  </template>
-                </el-popconfirm>
-
-                <el-popconfirm :title="`是否${statusMap[row.status]?.reverseLable}确认此园区?`" @confirm="handleChangeStatus(row)">
-                  <template #reference>
-                    <el-button
-                        class="reset-margin"
-                        link
-                        type="primary"
-                        :size="size"
-
-                      >
-                        {{ statusMap[row.status]?.reverseLable }}
-                      </el-button>
-                  </template>
-                </el-popconfirm>
-
+              </template>
+            </el-popconfirm>
           </template>
         </pure-table>
       </template>

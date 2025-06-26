@@ -91,7 +91,7 @@ const handleChangeOrgType = (row, key='orgTypeId') => {
     <!-- 右侧内容区域 -->
     <div class="flex-1 ml-5">
       <el-table :data="tableData" border style="width: 100%">
-        <el-table-column prop="id" label="序号" width="60">
+        <el-table-column prop="id" label="序号" width="90">
           <template #default="{ row, $index }">
             {{ $index + 1 }}
           </template>
