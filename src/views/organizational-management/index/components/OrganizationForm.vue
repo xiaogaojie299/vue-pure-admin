@@ -432,7 +432,7 @@
           </el-form-item>
         </el-col>
         <el-col :span="6">
-          <el-form-item label="角色:" prop="">
+          <!-- <el-form-item label="角色:" prop="">
             <el-select v-model="form.roleId">
               <el-option
                 v-for="item in roleOptions"
@@ -441,7 +441,7 @@
                 :key="item.roleId"
               ></el-option>
             </el-select>
-          </el-form-item>
+          </el-form-item> -->
         </el-col>
       </el-row>
     </el-form>
