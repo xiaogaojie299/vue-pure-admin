@@ -154,7 +154,6 @@ const {
                         link
                         type="primary"
                         :size="size"
-
                       >
                         {{ bannerStatusMap[row.status]?.reverseLable }}
                       </el-button>
@@ -177,6 +176,7 @@ const {
                         link
                         type="danger"
                         :size="size"
+                        v-if="row.name !== '创新积分'"
                       >
                         删除
                       </el-button>

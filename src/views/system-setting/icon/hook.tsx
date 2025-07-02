@@ -159,7 +159,7 @@ export function useIcon(tableRef: Ref) {
   function openDialog(title = "新增", row: FormItemProps) {
     const isWatch = ref(title === "预览");
     addDialog({
-      title: `${title}banner`,
+      title: `${title}Icon`,
       props: {
         formInline: {
           name: row?.name ?? "",
