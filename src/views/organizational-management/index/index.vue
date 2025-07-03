@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { ref, defineOptions, onMounted } from "vue";
-
 import { useOrganManagement } from "./hook";
 import { PureTableBar } from "@/components/RePureTableBar";
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
 import Search from "./components/Search.vue";
+import PaymentAuthorization from './components/PaymentAuthorization.vue'; // 引入支付方式授权设置组件
 
 import Delete from "~icons/ep/delete";
 import Refresh from "~icons/ep/refresh";
@@ -16,9 +16,12 @@ defineOptions({
 
 const formRef = ref();
 const tableRef = ref();
+const paymentAuthorizationRef = ref(); // 用于控制支付方式授权设置弹窗
+
 onMounted(() => {
   onSearch()
 })
+
 const {
   form,
   loading,
@@ -40,6 +43,10 @@ const {
   handleGoDetails,
   handleGoEditLog
 } = useOrganManagement(tableRef);
+
+const openPaymentAuthorization = () => {
+  paymentAuthorizationRef.value.openDialog();
+};
 </script>
 
 <template>
@@ -101,11 +108,11 @@ const {
           @page-size-change="handleSizeChange"
           @page-current-change="handleCurrentChange"
         >
-          <template #handle="{row}"> 
+          <template #handle="{row}">
             <el-button
               type="primary"
               :size="size"
-              @click="handleGoEdit(row)"
+              @click="handleGo(rowEdit)"
               link
             >
               编辑
@@ -124,9 +131,11 @@ const {
               type="primary"
               :size="size"
               link
+              @click="openPaymentAuthorization"
             >
               支付方式设置
             </el-button>
+
             <el-button
               type="primary"
               :size="size"
@@ -136,21 +145,23 @@ const {
               修改日志
             </el-button>
 
-                <el-popconfirm title="是否确认删除?" @confirm="handleDelete(row)">
-                  <template #reference>
-                    <el-button
-                        class="reset-margin"
-                        link
-                        type="danger"
-                        :size="size"
-                      >
-                        删除
-                      </el-button>
-                  </template>
-                </el-popconfirm>
+            <el-popconfirm title="是否确认删除?" @confirm="handleDelete(row)">
+              <template #reference>
+                <el-button
+                  class="reset-margin"
+                  link
+                  type="danger"
+                  :size="size"
+                >
+                  删除
+                </el-button>
+              </template>
+            </el-popconfirm>
           </template>
         </pure-table>
       </template>
     </PureTableBar>
+
+    <PaymentAuthorization ref="paymentAuthorizationRef" /> <!-- 使用支付方式授权设置组件 -->
   </div>
 </template>

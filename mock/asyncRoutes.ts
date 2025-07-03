@@ -37,6 +37,7 @@ export const routes = [
   },
   // 入驻管理
   {
+    id: 2008,
     path: "/audit-pending-management",
     name: "AuditPendingManagement",
     meta: {
@@ -46,6 +47,7 @@ export const routes = [
     },
     children: [
       {
+        id: 2010,
         path: "/audit-pending/management/org",
         serverName: "",
         name: "AuditPendingManagementOrg",
@@ -64,6 +66,7 @@ export const routes = [
         component: "audit-pending-management/org/detail.vue"
       },
       {
+        id: 2009,
         path: "/audit-pending/management/user",
         name: "AuditPendingManagementUser",
         meta: {
@@ -85,6 +88,7 @@ export const routes = [
     redirect: "/system-user/tourist",
     children: [
       {
+        id: 2012,
         path: "/system-user/tourist",
         name: "SystemUserTourist",
         meta: {
@@ -100,7 +104,7 @@ export const routes = [
         },
         children: [
           {
-            id: 2014,
+            id: 2013,
             path: "/organizational-management/index",
             name: "OrganizationalManagementIndex",
             meta: {
@@ -160,6 +164,7 @@ export const routes = [
 
   // 系统设置
   {
+    id: 2016,
     path: "/system-setting",
     name: "SystemSetting",
     meta: {
@@ -227,6 +232,7 @@ export const routes = [
         },
         children: [
           {
+            id: 2017,
             path: "/system-setting/banner",
             name: "SystemSettingBanner",
             meta: {
@@ -236,6 +242,7 @@ export const routes = [
           },
 
           {
+            id: 2018,
             path: "/system-setting/icon",
             name: "SystemSettingIcon",
             meta: {
@@ -245,6 +252,7 @@ export const routes = [
           },
 
           {
+            id: 2019,
             path: "/system-setting/agreement",
             name: "SystemSettingAgreement",
             meta: {
@@ -254,6 +262,7 @@ export const routes = [
           },
 
           {
+            id: 2020,
             path: "/system-setting/org-filed",
             name: "SystemSettingOrgFiled",
             meta: {
@@ -280,6 +289,7 @@ export const routes = [
         },
         children: [
           {
+            id: 2006,
             path: "/region-management/index",
             name: "RegionManagementIndex",
             meta: {
@@ -289,6 +299,7 @@ export const routes = [
           },
 
           {
+            id: 2007,
             path: "/region-management/park",
             name: "RegionManagementPark",
             meta: {
@@ -300,7 +311,7 @@ export const routes = [
             path: "/region-management/edit-park-detail",
             name: "RegionManagementEditParkDetail",
             meta: {
-              title: "园区管理",
+              title: "园区详情",
               showLink: false
             },
             component: "region-management/park/edit-park-detail.vue"
@@ -320,11 +331,11 @@ export const routes = [
     },
     children: [
       {
+        id: 101,
         path: "/system/role/index",
         component: "system/role/index",
         name: "SystemRole",
         meta: {
-          id: 101,
           title: "角色管理",
           showParent: true
         }
@@ -336,6 +347,7 @@ export const routes = [
 export const orgOnlyRoutes = [
   // 组织页面独有页面
   {
+    id: 2021,
     path: "/organizational-only-management",
     name: "OrganizationalOnlyManagement",
     meta: {
@@ -345,13 +357,14 @@ export const orgOnlyRoutes = [
     },
     children: [
       {
+        id: 2023,
         path: "/organizational-only-management/index",
         name: "OrganizationalOnlyManagementIndex",
         meta: {
           title: "组织园区"
         },
         component: "organizational-only-management/index.vue"
-      },
+      }
       // {
       //   path: "/organizational-only-management/detail",
       //   name: "OrganizationalOnlyManagementDetail",

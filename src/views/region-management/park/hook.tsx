@@ -102,12 +102,12 @@ export function usePark(tableRef?: Ref) {
     {
       label: "所属区域",
       prop: "regionRelationName",
-      slot: "regionRelationName",
+      slot: "regionRelationName"
     },
 
     {
       label: "详细地址",
-      prop: ""
+      prop: "address"
     },
     {
       label: "楼栋数量",
@@ -170,14 +170,14 @@ function handleCascaderChange(value: any[]) {
   }
 
   /** 批量删除 */
-  async function onbatchDel() {
+  async function onbatchDel() { 
     // 返回当前选中的行
     const curSelected = tableRef.value.getTableRef().getSelectionRows();
     // 接下来根据实际业务，通过选中行的某项数据，比如下面的id，调用接口进行批量删除
 
-    await deleteRegion({
-      ids: getKeyList(curSelected, "id")
-    });
+    await deleteRegion(
+      getKeyList(curSelected, "id")
+    );
 
     message(TOAST_TITLE_SUCCESS, { type: "success" });
 

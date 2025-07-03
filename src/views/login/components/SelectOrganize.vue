@@ -44,7 +44,7 @@ defineExpose({
     <div class="flex justify-center">
       <div class="w-1/2">
         <PlusCheckCardGroup v-model="current" :options="props.list">
-          <template #extra> 侧边 </template>
+          <template #extra="{description}"> {{ description || 0 }} </template>
         </PlusCheckCardGroup>
       </div>
     </div>

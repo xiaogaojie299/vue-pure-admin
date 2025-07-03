@@ -50,7 +50,7 @@ defineExpose({ getRef });
     </el-form-item>
 
     <!-- 用户状态 -->
-    <el-form-item label="用户状态">
+    <el-form-item label="是否启用">
       <el-switch
         v-model="newFormInline.status"
         inline-prompt

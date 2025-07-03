@@ -134,16 +134,13 @@ function transformFlattenToNested(data: FlattenedItem[]): NestedBuilding[] {
     const building = map.get(key)!;
     if (item.floor) {
       building.units.push({
-        floor: item.floor
+        floor: item.floor,
+        unitName: item.unitName
       });
-    } else if (item.unitName) {
-      building.units.push({
-        unitName: item.unitName,
-      });
-    } else {
+    }
+   if(item.name) {
       building.buildingName = item.name;
     }
-    
   }
   return Array.from(map.values());
 }
@@ -161,7 +158,7 @@ const onSubmit = async () => {
   let buildingDetail = buildingInfoRef.value?.transformBuildingData(
     form.value.buildings
   );
-  console.log('buildingDetail', form.value.buildings);
+  console.log('buildingDetail123', form.value.buildings);
 
   console.log('buildingDetail', buildingDetail);
   let regionRelationName = form.value?.regionRelation?.map(item => {
@@ -171,7 +168,8 @@ const onSubmit = async () => {
     ...form.value,
     regionRelation: convertArrayToString(form.value?.regionRelation),
     regionRelationName: convertArrayToString(regionRelationName, '-'),
-    buildingDetail: JSON.stringify(buildingDetail)
+    buildingDetail: JSON.stringify(buildingDetail),
+    buildingNum: form.value.buildings?.length,
   };
   delete params.buildings;
 

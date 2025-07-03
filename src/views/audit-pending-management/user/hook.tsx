@@ -80,16 +80,16 @@ export function useOrgTags(tableRef: Ref) {
     },
     {
       label: "申请组织",
-      prop: "parkName",
+      prop: "orgName",
       minWidth: 100
     },
     {
-          label: "申请时间",
-          prop: "createTime",
-          minWidth: 180,
-          formatter: ({ createTime }) =>
-            dayjs(createTime).format("YYYY-MM-DD HH:mm:ss")
-        },
+      label: "申请时间",
+      prop: "createTime",
+      minWidth: 180,
+      formatter: ({ createTime }) =>
+        dayjs(createTime).format("YYYY-MM-DD HH:mm:ss")
+    },
     {
       label: "审核状态",
       prop: "status",

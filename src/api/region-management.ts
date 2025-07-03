@@ -25,14 +25,19 @@ export const addRegion = (data?: object) => {
   return http.request<ResultTable>("post", baseUrlApi("system/region/add"), {
     data
   });
-};
+}; 
 
 /** 删除-区域管理-区域管理 */
 export const deleteRegion = (data?: object) => {
   return http.request<ResultTable>(
     "post",
     baseUrlApi("system/region/delete"),
-    { data }
+    { data },
+    {
+      headers: {
+        "Content-Type": "application/json"
+      }
+    }
   );
 };
 

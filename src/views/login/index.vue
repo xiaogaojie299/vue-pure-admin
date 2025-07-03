@@ -19,6 +19,7 @@ import { useUserStoreHook } from "@/store/modules/user";
 import { initRouter, getTopMenu } from "@/router/utils";
 import { bg, avatar, illustration } from "./utils/static";
 import { ReImageVerify } from "@/components/ReImageVerify";
+
 import {
   ref,
   toRaw,
@@ -89,8 +90,9 @@ const handleVisibleSelectOrganize = async () => {
         ...v,
         title: v.name,
         value: v.id,
+        description: v.score + "",
         avatar:
-          v?.logo ||
+          v?.logoUrl ||
           "https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg"
       };
     });
@@ -136,13 +138,16 @@ const handleVisibleSelectOrganize = async () => {
   });
 };
 
-const goJumpRouter = () => {
+const goJumpRouter = async () => {
+  initRouter().then(asyncRoute => {
+    console.log('asyncRoute', asyncRoute);
   router
     .push(getTopMenu(true).path)
     .then(() => {
       message(t("login.pureLoginSuccess"), { type: "success" });
     })
     .finally(() => (disabled.value = false));
+  });
 };
 const onLogin = async (formEl: FormInstance | undefined) => {
   if (!formEl) return;
@@ -156,36 +161,28 @@ const onLogin = async (formEl: FormInstance | undefined) => {
         })
         .then(res => {
           if (res.code == 200) {
-            // 获取后端路由
-            return initRouter().then(asyncRoute => {
-              console.log("asyncRoute", asyncRoute);
-              disabled.value = true;
-              let list = [
-                {
-                  title: "标题一",
-                  value: "0",
-                  description: "坚持梦想，成就不凡的自己",
-                  avatar:
-                    "https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg"
-                },
-                {
-                  title: "标题二",
-                  value: "1",
-                  description: "每一次努力，都是成长的契机",
-                  avatar:
-                    "https://fuss10.elemecdn.com/1/34/19aa98b1fcb2781c4fba33d850549jpeg.jpeg"
-                }
-              ];
-              // 如果是平台管理员账号登录，则不选择组织，如果是组织账号登录，需要选择组织的账号；
-              if (isAdmin.value) {
-                goJumpRouter();
-                return;
+              /**
+               * 
+                return initRouter().then(asyncRoute => {
+                  console.log("asyncRoute", asyncRoute);
+                  disabled.value = true;
+                  // 如果是平台管理员账号登录，则不选择组织，如果是组织账号登录，需要选择组织的账号；
+                  if (isAdmin.value) {
+                    goJumpRouter();
+                    return;
+                  }
+                  handleVisibleSelectOrganize();
+                });
+               * 
+               */
+                if (isAdmin.value) {
+                    goJumpRouter();
+                    return;
+                  }
+                  handleVisibleSelectOrganize();
+              } else {
+                message(t("login.pureLoginFail"), { type: "error" });
               }
-              handleVisibleSelectOrganize();
-            });
-          } else {
-            message(t("login.pureLoginFail"), { type: "error" });
-          }
         })
         .finally(() => (loading.value = false));
     }

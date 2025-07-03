@@ -113,11 +113,11 @@ const {
               取消选择
             </el-button>
           </div>
-          <el-popconfirm title="是否确认删除?" @confirm="onbatchDel">
+          <!-- <el-popconfirm title="是否确认删除?" @confirm="onbatchDel">
             <template #reference>
               <el-button type="danger" text class="mr-1!"> 批量删除 </el-button>
             </template>
-          </el-popconfirm>
+          </el-popconfirm> -->
         </div>
         <pure-table
           ref="tableRef"
@@ -164,7 +164,8 @@ const {
             >
               编辑
             </el-button>
-            <el-popconfirm
+            <el-button type="primary" link @click="goEditDetail(row.id)">查看详情</el-button>
+            <!-- <el-popconfirm
               title="是否确认删除此园区?"
               @confirm="handleDelete(row)"
             >
@@ -173,7 +174,7 @@ const {
                   删除
                 </el-button>
               </template>
-            </el-popconfirm>
+            </el-popconfirm> -->
 
             <el-popconfirm
               :title="`是否${statusMap[row.status]?.reverseLable}确认此园区?`"

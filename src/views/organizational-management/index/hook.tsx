@@ -204,6 +204,10 @@ export function useOrganManagement(tableRef: Ref) {
       }
     });
   }
+
+  const handleSetPayMethod = () => {
+
+  }
   
   onMounted(() => {
     // onSearch();
@@ -228,6 +232,7 @@ export function useOrganManagement(tableRef: Ref) {
     handleGoEdit,
     handleDelete,
     handleGoDetails,
-    handleGoEditLog
+    handleGoEditLog,
+    handleSetPayMethod
   };
 }

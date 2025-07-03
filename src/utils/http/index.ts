@@ -94,7 +94,8 @@ class PureHttp {
               let noOrgIdApiList = [
                 "/upload",
                 "org-field/save",
-                "score/get-org-index"
+                "score/get-org-index",
+                "/delete"
               ];
               
               if (!isUrlContainKeywords(config, noOrgIdApiList)) {

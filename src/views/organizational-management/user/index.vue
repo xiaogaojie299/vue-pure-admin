@@ -112,8 +112,7 @@ const {
             class="w-[180px]!"
           />
         </el-form-item>
-        <el-form-item label="注册时间：" prop="orgType">
-          <el-form-item label="" label-width="0" prop="startTime">
+          <el-form-item label="注册时间："  prop="startTime">
             <el-date-picker
             v-model="form.startTime"
             type="datetime"
@@ -128,13 +127,12 @@ const {
             <el-date-picker
             v-model="form.endTime"
             type="datetime"
-            placeholder="开始时间"
+            placeholder="结束时间"
             class="w-[160px]!"
             value-format="YYYY-MM-DD HH:mm:ss"
             clearable
             
           />
-        </el-form-item>
         </el-form-item>
         <!-- <el-form-item label="状态：" prop="status">
           <el-select

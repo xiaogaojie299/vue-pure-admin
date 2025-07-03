@@ -283,3 +283,8 @@ export const getAllOrg = (data?: object) => {
     }
   );
 };
+
+
+export const getRouters = () => {
+  return http.request<Result>("post", baseUrlApi("system/menu/getRouters"));
+}

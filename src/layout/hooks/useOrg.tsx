@@ -7,7 +7,8 @@ import ComponentSelectOrganize from "@/views/login/components/SelectOrganize.vue
 
 import { useRouter } from "vue-router";
 import { createTypeReferenceDirectiveResolutionCache } from "typescript";
-
+import { initRouter } from "@/router/utils";
+import { storageLocal } from "@pureadmin/utils";
 
 export function useOrg() {
   const allOrgList = ref([]);
@@ -28,6 +29,9 @@ export function useOrg() {
       beforeSure: async (done, { options, index }) => {
         const { id } = selectOrganizeRef.value?.getCurrent();
         useUserStoreHook().SET_ORGID(id);
+        // 每个组织的路由可能不一样，这里刷新一下路由
+        storageLocal().removeItem("async-routes");
+        initRouter();
         done();
       },
   
@@ -64,8 +68,9 @@ export function useOrg() {
             ...v,
             title: v.name,
             value: v.id,
+            description: v.score + "",
             avatar:
-              v?.logo ||
+              v?.logoUrl ||
               "https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg"
           };
         });
