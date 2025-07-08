@@ -21,7 +21,7 @@
           <el-row :gutter="20" >
             <el-col :span="8">姓名：{{ userInfo?.userName }}</el-col>
             <el-col :span="8">性别：{{ userInfo?.sex == 0 ? '男' : '女' }}</el-col>
-            <el-col :span="8">绑定组织：{{ userInfo?.roleName }}</el-col>
+            <el-col :span="8">绑定组织：{{ userInfo?.orgNames }}</el-col>
           </el-row>
           <el-row :gutter="20" class="my-4">
             <el-col :span="8">电话：{{ userInfo?.phonenumber }}</el-col>

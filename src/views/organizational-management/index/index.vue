@@ -112,7 +112,7 @@ const openPaymentAuthorization = () => {
             <el-button
               type="primary"
               :size="size"
-              @click="handleGo(rowEdit)"
+              @click="handleGoEdit(row)"
               link
             >
               编辑

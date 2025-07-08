@@ -9,6 +9,7 @@ import {
   systemSet
 } from "@/router/enums";
 import path from "path";
+import { id } from "element-plus/es/locale/index.mjs";
 
 /**
  * roles：页面级别权限，这里模拟二种 "admin"、"common"
@@ -19,6 +20,7 @@ import path from "path";
 export const routes = [
   // 组织架构
   {
+    id: 2088,
     path: "/organizational-structure",
     isFixed: true,
     meta: {
@@ -46,7 +48,7 @@ export const routes = [
     },
     children: [
       {
-        id: 2009,
+        id: 2063,
         path: "/audit-pending/management/user",
         name: "AuditPendingManagementUser",
         meta: {
@@ -66,7 +68,7 @@ export const routes = [
       },
 
       {
-        id: 2010,
+        id: 2064,
         path: "/audit-pending/management/org",
         serverName: "",
         name: "AuditPendingManagementOrg",
@@ -89,7 +91,7 @@ export const routes = [
     redirect: "/system-user/tourist",
     children: [
       {
-        id: 2012,
+        id: 2087,
         path: "/system-user/tourist",
         name: "SystemUserTourist",
         meta: {
@@ -105,7 +107,7 @@ export const routes = [
         },
         children: [
           {
-            id: 2013,
+            id: 2067,
             path: "/organizational-management/index",
             name: "OrganizationalManagementIndex",
             meta: {
@@ -114,7 +116,7 @@ export const routes = [
             component: "organizational-management/index/index.vue"
           },
           {
-            id: 2015,
+            id: 2068,
             path: "/organizational-structure/org-user",
             name: "OrganizationalManagementOrgUser",
             meta: {
@@ -169,7 +171,6 @@ export const routes = [
 
   // 系统设置
   {
-    id: -1,
     path: "/system-setting",
     name: "SystemSetting",
     meta: {
@@ -179,7 +180,6 @@ export const routes = [
     },
     children: [
       {
-        id: 2013,
         path: "/categoriesManagement",
         name: "CategoriesManagement",
         meta: {
@@ -187,6 +187,7 @@ export const routes = [
         },
         children: [
           {
+            id: 2071,
             path: "/categories-management/org-tags",
             name: "CategoriesManagementOrgTags",
             meta: {
@@ -196,6 +197,7 @@ export const routes = [
           },
 
           {
+            id: 2072,
             path: "/categories-management/org-nature",
             name: "CategoriesManagementOrgNature",
             meta: {
@@ -204,6 +206,7 @@ export const routes = [
             component: "categories-management/org-nature/index.vue"
           },
           {
+            id: 2073,
             path: "/categories-management/industry-category",
             name: "CategoriesManagementIndustryCategory",
             meta: {
@@ -212,6 +215,7 @@ export const routes = [
             component: "categories-management/industry-category/index.vue"
           },
           {
+            id: 2074,
             path: "/categories-management/org-category",
             name: "CategoriesManagementOrgCategory",
             meta: {
@@ -239,7 +243,7 @@ export const routes = [
         },
         children: [
           {
-            id: 2017,
+            id: 2076,
             path: "/system-setting/banner",
             name: "SystemSettingBanner",
             meta: {
@@ -249,7 +253,7 @@ export const routes = [
           },
 
           {
-            id: 2018,
+            id: 2077,
             path: "/system-setting/icon",
             name: "SystemSettingIcon",
             meta: {
@@ -259,7 +263,7 @@ export const routes = [
           },
 
           {
-            id: 2019,
+            id: 2078,
             path: "/system-setting/agreement",
             name: "SystemSettingAgreement",
             meta: {
@@ -269,7 +273,7 @@ export const routes = [
           },
 
           {
-            id: 2020,
+            id: 2079,
             path: "/system-setting/org-filed",
             name: "SystemSettingOrgFiled",
             meta: {
@@ -278,6 +282,7 @@ export const routes = [
             component: "system-setting/org-filed/index.vue"
           },
           {
+            id: 2080,
             path: "/organizational-structure/score",
             name: "OrganizationalManagementScore",
             meta: {
@@ -296,7 +301,7 @@ export const routes = [
         },
         children: [
           {
-            id: 2006,
+            id: 2082,
             path: "/region-management/index",
             name: "RegionManagementIndex",
             meta: {
@@ -306,7 +311,7 @@ export const routes = [
           },
 
           {
-            id: 2007,
+            id: 2083,
             path: "/region-management/park",
             name: "RegionManagementPark",
             meta: {
@@ -355,7 +360,7 @@ export const routes = [
 export const orgOnlyRoutes = [
   // 组织页面独有页面
   {
-    id: 2021,
+    id: 2084,
     path: "/organizational-only-management",
     name: "OrganizationalOnlyManagement",
     meta: {
@@ -365,7 +370,7 @@ export const orgOnlyRoutes = [
     },
     children: [
       {
-        id: 2023,
+        id: 2085,
         path: "/organizational-only-management/index",
         name: "OrganizationalOnlyManagementIndex",
         meta: {
@@ -374,7 +379,7 @@ export const orgOnlyRoutes = [
         component: "organizational-only-management/index.vue"
       },
       {
-        id: 2022,
+        id: 2086,
         path: "/organizational-only-management/detail",
         name: "OrganizationalOnlyManagementDetail",
         meta: {

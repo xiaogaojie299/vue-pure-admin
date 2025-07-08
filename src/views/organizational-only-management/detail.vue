@@ -1,19 +1,22 @@
 <template>
-  <div></div>
+  <div>
+    <orgDetail :id="id"></orgDetail>
+  </div>
 </template>
 <script lang="ts" setup>
 import { onMounted, computed } from "vue";
 import { useRouter } from "vue-router";
 import { useUserStoreHook } from "@/store/modules/user";
 
+import orgDetail from  "@/views/organizational-management/index/details.vue"
 const router = useRouter();
 const id = computed(() => useUserStoreHook().orgId);
-onMounted(() => {
-  router.push({
-      name: "OrganizationalManagementDetails",
-      query: {
-        id: id.value
-      }
-    });
-}); 
+// onMounted(() => {
+//   router.push({
+//       name: "OrganizationalManagementDetails",
+//       query: {
+//         id: id.value
+//       }
+//     });
+// }); 
 </script>

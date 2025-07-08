@@ -83,11 +83,10 @@ export function useOrg() {
   };
 
   const handleGoOrgDetail = () => { 
-    console.log(router);
     router?.push({
-      name: "OrganizationalManagementDetails",
+      name: "OrganizationalOnlyManagementDetail",
       query: {
-        id: useUserStoreHook().orgId
+        id: useUserStoreHook()?.orgId
       }
     });
   };

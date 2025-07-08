@@ -1,5 +1,5 @@
 <script setup lang="tsx">
-import { defineOptions, ref, onMounted, reactive, computed } from "vue";
+import { defineOptions, ref, onMounted, defineProps, computed } from "vue";
 import { useRouter, useRoute } from "vue-router";
 
 import ScrollAnchorNav from "./components/ScrollAnchorNav.vue";
@@ -20,12 +20,18 @@ defineOptions({
   name: "OrganizationalManagementAdd"
 });
 
+const props = defineProps({
+  id: {
+    default: ""
+  }
+})
+
 const groupList = ref([]);
 
 const router = useRouter();
 const route = useRoute();
 
-const id = computed(() => route.query.id || undefined);
+const id = computed(() => route.query.id || props.id);
 const currentType = ref("组织信息");
 const goEditOrg = () => {
   router.push({

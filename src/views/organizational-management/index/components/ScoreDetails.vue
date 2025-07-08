@@ -51,27 +51,31 @@ const titleMap = new Map([
 const breakFaithOptions = [
   {
     label: '守信组织（企业）',
-    value: 0,
-  },
-  {
-    label: '信用异常组织（企业）',
     value: 1,
   },
   {
-    label: '一般失信组织（企业）',
+    label: '信用异常组织（企业）',
     value: 2,
   },
   {
-    label: '严重失信组织（企业）',
+    label: '一般失信组织（企业）',
     value: 3,
+  },
+  {
+    label: '严重失信组织（企业）',
+    value: 4,
   },
 ]
 // 1=守信组织，2=信用异常组织，3=一般失信组织，4=严重失信组织
 const executionerOptions = [
-  { label: '守信组织', value: 0 },
-  { label: '信用异常组织', value: 1 },
-  { label: '一般失信组织', value: 2 },
-  { label: '严重失信组织', value: 3 },
+  { label: '存续', value: 1 },
+  { label: '在业', value: 2 },
+  { label: '吊销', value: 3 },
+  { label: '注销', value: 4 },
+  { label: '迁入', value: 5 },
+  { label: '迁出', value: 6 },
+  { label: '停业', value: 7 },
+  { label: '清算', value: 8 },
 ]
 const transformData = (data: any[]) => {
   const transformedData = [];
@@ -113,13 +117,17 @@ const transformData = (data: any[]) => {
         case 49:
           values['三等'] = item.submitValue;
           break;
-          case 58:
-            if(!!item.submitValue) {
-              values[breakFaithOptions[item.submitValue - 1]?.label] = '';
+        case 58:
+          if (item.submitValue === '0') {
+            values['-'] = '';
+          } else if (!!item.submitValue) {
+            values[breakFaithOptions[item.submitValue - 1]?.label] = '';
             }
           break;
-          case 63:
-            if(!!item.submitValue) {
+        case 63:
+        if (item.submitValue === '0') {
+            values['-'] = '';
+          }else if(!!item.submitValue) {
               values[executionerOptions[item.submitValue - 1]?.label] = '';
             }
           break;

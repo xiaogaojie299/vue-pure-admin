@@ -153,8 +153,8 @@ export function useOrganManagement(tableRef: Ref) {
         pageNum: pagination.currentPage
       })
     );
-    dataList.value = data.records;
-    pagination.total = data.total;
+    dataList.value = data?.records || [];
+    pagination.total = data?.total || 0;
     setTimeout(() => {
       loading.value = false;
     }, 500);
